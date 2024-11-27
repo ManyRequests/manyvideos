@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
+use App\Jobs\ProcessVideo;
 use App\Models\Video;
 use Inertia\Inertia;
 
@@ -33,10 +34,15 @@ class VideoController extends Controller
     public function store(StoreVideoRequest $request)
     {
         $data = [
-            ...$request->validated(),
+            ...$request->only('title', 'description'),
+            'thumbnail' => 'thumbnails/default.jpg',
+            'size' => $request->file('file')->getSize(),
+            'duration' => 60,
+            'url' => $request->file('file')->store('videos', 'public'),
             'user_id' => $request->user()->id,
         ];
 
+        // process video
         Video::create($data);
 
         return redirect()->route('videos.index');
