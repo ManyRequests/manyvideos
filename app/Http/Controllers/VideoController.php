@@ -24,7 +24,7 @@ class VideoController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Videos/Create');
     }
 
     /**
@@ -32,7 +32,14 @@ class VideoController extends Controller
      */
     public function store(StoreVideoRequest $request)
     {
-        //
+        $data = [
+            ...$request->validated(),
+            'user_id' => $request->user()->id,
+        ];
+
+        Video::create($data);
+
+        return redirect()->route('videos.index');
     }
 
     /**
