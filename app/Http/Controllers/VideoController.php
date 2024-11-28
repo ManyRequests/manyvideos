@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
+use App\Jobs\GenerateVideoThumbnail;
 use App\Jobs\ProcessVideo;
 use App\Models\Video;
 use Illuminate\Support\Facades\Bus;
@@ -48,6 +49,7 @@ class VideoController extends Controller
 
         Bus::chain([
             new ProcessVideo($video),
+            new GenerateVideoThumbnail($video),
         ])->dispatch();
 
         return redirect()->route('videos.index');

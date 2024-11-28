@@ -1,11 +1,12 @@
 <?php
 
 use App\Interfaces\MultimediaService;
+use App\Jobs\GenerateVideoThumbnail;
 use App\Jobs\ProcessVideo;
 use App\Models\User;
 use App\Models\Video;
-use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,6 +18,9 @@ describe('VideoController', function () {
         $this->mock(MultimediaService::class, function ($mock) {
             $mock->shouldReceive('compressVideo')
                 ->andReturn('videos/compressed.mp4');
+
+            $mock->shouldReceive('generateVideoThumbnail')
+                ->andReturn('thumbnails/default.jpg');
         });
     });
 
@@ -74,10 +78,9 @@ describe('VideoController', function () {
 
     it('calls the video process jobs', function () {
         $this->actingAs($this->user);
-        Queue::fake();
+        Bus::fake();
 
         $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
-
 
         $response = $this->post('/videos', [
             'title' => 'My video',
@@ -85,6 +88,9 @@ describe('VideoController', function () {
             'file' => $file,
         ]);
 
-        Queue::assertPushed(ProcessVideo::class);
+        Bus::assertChained([
+            ProcessVideo::class,
+            GenerateVideoThumbnail::class,
+        ]);
     });
 });
