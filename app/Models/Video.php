@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\VideoStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,7 +20,12 @@ class Video extends Model
         'duration',
         'width',
         'height',
+        'status',
         'user_id',
+    ];
+
+    protected $casts = [
+        'status' => VideoStatusEnum::class,
     ];
 
     public function user()
