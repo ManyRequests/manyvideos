@@ -38,86 +38,99 @@ describe('VideoController', function () {
         Notification::fake();
     });
 
-    it('lists videos', function () {
-        $video = Video::factory()->create([
-            'user_id' => $this->user->id,
-        ]);
-        $this->actingAs($this->user);
+    describe('show endpoint', function () {});
 
-        $response = $this->get('/videos')
-            ->assertStatus(200);
+    describe('index endpoint', function () {
+        it('lists videos', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
 
-        $response->assertSee($video->title);
+            $response = $this->get('/videos')
+                ->assertStatus(200);
+
+            $response->assertSee($video->title);
+        });
+
+        it('lists only the user videos', function () {
+            $video = Video::factory()->create();
+            $this->actingAs($this->user);
+
+            $response = $this->get('/videos')
+                ->assertStatus(200);
+
+            $response->assertDontSee($video->title);
+        });
     });
 
-    it('lists only the user videos', function () {
-        $video = Video::factory()->create();
-        $this->actingAs($this->user);
+    describe('create endpoint', function () {
+        it('creates a video', function () {
+            $this->actingAs($this->user);
 
-        $response = $this->get('/videos')
-            ->assertStatus(200);
+            $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
 
-        $response->assertDontSee($video->title);
+            $response = $this->post('/videos', [
+                'title' => 'My video',
+                'description' => 'My video description',
+                'file' => $file,
+            ]);
+
+            // redirects to the video list
+            $response->assertRedirect('/videos');
+
+            $this->assertDatabaseHas('videos', [
+                'title' => 'My video',
+                'url' => 'videos/compressed.mp4',
+                'description' => 'My video description',
+                'size' => 1048576,
+                'duration' => 60,
+                'user_id' => $this->user->id,
+            ]);
+        });
+
+        it('stores the video file', function () {
+            $this->actingAs($this->user);
+
+            $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
+
+            Storage::fake('public');
+
+            $response = $this->post('/videos', [
+                'title' => 'My video',
+                'description' => 'My video description',
+                'file' => $file,
+            ]);
+
+            Storage::disk('public')->assertExists('videos/' . $file->hashName());
+        });
+
+        it('calls the video process jobs', function () {
+            $this->actingAs($this->user);
+            Bus::fake();
+
+            $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
+
+            $response = $this->post('/videos', [
+                'title' => 'My video',
+                'description' => 'My video description',
+                'file' => $file,
+            ]);
+
+            Bus::assertChained([
+                ProcessVideo::class,
+                GenerateVideoThumbnail::class,
+                SaveVideoMetadata::class,
+                UpdateVideoStatus::class,
+                SendVideoProcessingCompletedNotification::class,
+            ]);
+        });
     });
 
-    it('creates a video', function () {
-        $this->actingAs($this->user);
-
-        $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
-
-        $response = $this->post('/videos', [
-            'title' => 'My video',
-            'description' => 'My video description',
-            'file' => $file,
-        ]);
-
-        // redirects to the video list
-        $response->assertRedirect('/videos');
-
-        $this->assertDatabaseHas('videos', [
-            'title' => 'My video',
-            'url' => 'videos/compressed.mp4',
-            'description' => 'My video description',
-            'size' => 1048576,
-            'duration' => 60,
-            'user_id' => $this->user->id,
-        ]);
+    describe('update endpoint', function () {
     });
 
-    it('stores the video file', function () {
-        $this->actingAs($this->user);
+    describe('delete endpoint', function () {
 
-        $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
-
-        Storage::fake('public');
-
-        $response = $this->post('/videos', [
-            'title' => 'My video',
-            'description' => 'My video description',
-            'file' => $file,
-        ]);
-
-        Storage::disk('public')->assertExists('videos/' . $file->hashName());
-    });
-
-    it('calls the video process jobs', function () {
-        $this->actingAs($this->user);
-        Bus::fake();
-
-        $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
-
-        $response = $this->post('/videos', [
-            'title' => 'My video',
-            'description' => 'My video description',
-            'file' => $file,
-        ]);
-
-        Bus::assertChained([
-            ProcessVideo::class,
-            GenerateVideoThumbnail::class,
-            SaveVideoMetadata::class,
-            UpdateVideoStatus::class,
-            SendVideoProcessingCompletedNotification::class,
-        ]);
     });
 });
