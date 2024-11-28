@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Interfaces\MultimediaService;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
@@ -35,5 +36,27 @@ class FFmpegService implements MultimediaService
             ->save($thumbnail_filepath);
 
         return $thumbnail_filepath;
+    }
+
+    public function getVideoMetadata(string $filepath): array
+    {
+        // we need width, height, duration, and size
+        if (!Storage::disk('public')->exists($filepath)) {
+            return [];
+        }
+
+        $metadata = FFMpeg::fromFilesystem(Storage::disk('public'))
+            ->open($filepath)
+            ->getStreams();
+
+        $metadata = Arr::first($metadata)->all();
+        $size = Storage::disk('public')->size($filepath);
+
+        return [
+            'width' => $metadata['width'],
+            'height' => $metadata['height'],
+            'duration' => $metadata['duration'],
+            'size' => $size,
+        ];
     }
 }

@@ -21,4 +21,12 @@ interface MultimediaService
      * @return string
      */
     public function generateVideoThumbnail(string $filepath): string;
+
+    /**
+     *  Get the metadata of a video
+     *
+     * @param string $video
+     * @return array
+     */
+    public function getVideoMetadata(string $filepath): array;
 }
