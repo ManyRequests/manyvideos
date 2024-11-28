@@ -4,10 +4,12 @@ use App\Interfaces\MultimediaService;
 use App\Jobs\GenerateVideoThumbnail;
 use App\Jobs\ProcessVideo;
 use App\Jobs\SaveVideoMetadata;
+use App\Jobs\SendVideoProcessingCompletedNotification;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,6 +33,8 @@ describe('VideoController', function () {
                     'height' => 1080,
                 ]);
         });
+
+        Notification::fake();
     });
 
     it('lists videos', function () {
@@ -101,6 +105,7 @@ describe('VideoController', function () {
             ProcessVideo::class,
             GenerateVideoThumbnail::class,
             SaveVideoMetadata::class,
+            SendVideoProcessingCompletedNotification::class,
         ]);
     });
 });
