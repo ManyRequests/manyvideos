@@ -9,7 +9,10 @@ describe('FFmpegService', function () {
         $service = new FFmpegService();
 
         $file = new File(resource_path('tests/test_video.mp4'));
-        Storage::putFileAs('videos', $file, 'video.mp4');
+        // videos at public disk
+        $storage = Storage::disk('public');
+
+        $storage->putFileAs('videos', $file, 'video.mp4');
 
         $filepath = 'videos/video.mp4';
 
@@ -19,13 +22,13 @@ describe('FFmpegService', function () {
         expect($compressed_filepath)->toBe($expected_compressed_filepath);
 
         $originalSize = $file->getSize();
-        $compressedSize = Storage::size($compressed_filepath);
+        $compressedSize = $storage->size($compressed_filepath);
 
-        expect(Storage::exists($compressed_filepath))->toBeTrue();
+        expect($storage->exists($compressed_filepath))->toBeTrue();
         expect($compressedSize)->toBeLessThan($originalSize);
         expect($compressedSize)->toBeGreaterThan(0);
 
-        Storage::delete($filepath);
-        Storage::delete($compressed_filepath);
+        $storage->delete($filepath);
+        $storage->delete($compressed_filepath);
     });
 });
