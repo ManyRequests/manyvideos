@@ -21,4 +21,19 @@ class FFmpegService implements MultimediaService
 
         return $compressed_filepath;
     }
+
+    public function generateVideoThumbnail(string $filepath): string
+    {
+        $filepath_extension = pathinfo($filepath, PATHINFO_EXTENSION);
+        $thumbnail_filepath = str_replace(".{$filepath_extension}", '-thumbnail.jpg', $filepath);
+
+        FFMpeg::fromFilesystem(Storage::disk('public'))
+            ->open($filepath)
+            ->getFrameFromSeconds(5)
+            ->export()
+            ->toDisk(Storage::disk('public'))
+            ->save($thumbnail_filepath);
+
+        return $thumbnail_filepath;
+    }
 }
