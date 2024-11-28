@@ -50,6 +50,16 @@ describe('VideoController', function () {
         $response->assertSee($video->title);
     });
 
+    it('lists only the user videos', function () {
+        $video = Video::factory()->create();
+        $this->actingAs($this->user);
+
+        $response = $this->get('/videos')
+            ->assertStatus(200);
+
+        $response->assertDontSee($video->title);
+    });
+
     it('creates a video', function () {
         $this->actingAs($this->user);
 

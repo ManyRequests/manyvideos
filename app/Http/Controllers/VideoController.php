@@ -11,6 +11,7 @@ use App\Jobs\SaveVideoMetadata;
 use App\Jobs\SendVideoProcessingCompletedNotification;
 use App\Jobs\UpdateVideoStatus;
 use App\Models\Video;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
 use Inertia\Inertia;
 
@@ -19,10 +20,14 @@ class VideoController extends Controller
     /**
      * Display a listing of the user videos.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $videos = Video::where('user_id', $request->user()->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return Inertia::render('Videos/Index', [
-            'videos' => Video::all(),
+            'videos' => $videos,
         ]);
     }
 
