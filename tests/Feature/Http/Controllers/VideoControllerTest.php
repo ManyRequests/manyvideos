@@ -5,6 +5,7 @@ use App\Jobs\GenerateVideoThumbnail;
 use App\Jobs\ProcessVideo;
 use App\Jobs\SaveVideoMetadata;
 use App\Jobs\SendVideoProcessingCompletedNotification;
+use App\Jobs\UpdateVideoStatus;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Http\UploadedFile;
@@ -105,6 +106,7 @@ describe('VideoController', function () {
             ProcessVideo::class,
             GenerateVideoThumbnail::class,
             SaveVideoMetadata::class,
+            UpdateVideoStatus::class,
             SendVideoProcessingCompletedNotification::class,
         ]);
     });

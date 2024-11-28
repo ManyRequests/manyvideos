@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\VideoStatusEnum;
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
 use App\Jobs\GenerateVideoThumbnail;
 use App\Jobs\ProcessVideo;
 use App\Jobs\SaveVideoMetadata;
 use App\Jobs\SendVideoProcessingCompletedNotification;
+use App\Jobs\UpdateVideoStatus;
 use App\Models\Video;
 use Illuminate\Support\Facades\Bus;
 use Inertia\Inertia;
@@ -53,6 +55,7 @@ class VideoController extends Controller
             new ProcessVideo($video),
             new GenerateVideoThumbnail($video),
             new SaveVideoMetadata($video),
+            new UpdateVideoStatus($video, VideoStatusEnum::Processed),
             new SendVideoProcessingCompletedNotification($video),
         ])->dispatch();
 
