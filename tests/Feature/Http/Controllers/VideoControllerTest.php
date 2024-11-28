@@ -3,6 +3,7 @@
 use App\Interfaces\MultimediaService;
 use App\Jobs\GenerateVideoThumbnail;
 use App\Jobs\ProcessVideo;
+use App\Jobs\SaveVideoMetadata;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Http\UploadedFile;
@@ -21,6 +22,14 @@ describe('VideoController', function () {
 
             $mock->shouldReceive('generateVideoThumbnail')
                 ->andReturn('thumbnails/default.jpg');
+
+            $mock->shouldReceive('getVideoMetadata')
+                ->andReturn([
+                    'size' => 1048576,
+                    'duration' => 60,
+                    'width' => 1920,
+                    'height' => 1080,
+                ]);
         });
     });
 
@@ -91,6 +100,7 @@ describe('VideoController', function () {
         Bus::assertChained([
             ProcessVideo::class,
             GenerateVideoThumbnail::class,
+            SaveVideoMetadata::class,
         ]);
     });
 });
