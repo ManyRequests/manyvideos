@@ -6,6 +6,7 @@ use App\Http\Requests\StoreVideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
 use App\Jobs\ProcessVideo;
 use App\Models\Video;
+use Illuminate\Support\Facades\Bus;
 use Inertia\Inertia;
 
 class VideoController extends Controller
@@ -43,7 +44,11 @@ class VideoController extends Controller
         ];
 
         // process video
-        Video::create($data);
+        $video = Video::create($data);
+
+        Bus::chain([
+            new ProcessVideo($video),
+        ])->dispatch();
 
         return redirect()->route('videos.index');
     }

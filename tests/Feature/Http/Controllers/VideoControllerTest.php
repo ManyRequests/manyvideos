@@ -1,14 +1,23 @@
 <?php
 
+use App\Interfaces\MultimediaService;
+use App\Jobs\ProcessVideo;
 use App\Models\User;
 use App\Models\Video;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
 describe('VideoController', function () {
 
     beforeEach(function () {
         $this->user = User::factory()->create();
+
+        $this->mock(MultimediaService::class, function ($mock) {
+            $mock->shouldReceive('compressVideo')
+                ->andReturn('videos/compressed.mp4');
+        });
     });
 
     it('lists videos', function () {
@@ -39,7 +48,7 @@ describe('VideoController', function () {
 
         $this->assertDatabaseHas('videos', [
             'title' => 'My video',
-            'url' => 'videos/' . $file->hashName(),
+            'url' => 'videos/compressed.mp4',
             'description' => 'My video description',
             'size' => 1048576,
             'duration' => 60,
@@ -61,5 +70,21 @@ describe('VideoController', function () {
         ]);
 
         Storage::disk('public')->assertExists('videos/' . $file->hashName());
+    });
+
+    it('calls the video process jobs', function () {
+        $this->actingAs($this->user);
+        Queue::fake();
+
+        $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
+
+
+        $response = $this->post('/videos', [
+            'title' => 'My video',
+            'description' => 'My video description',
+            'file' => $file,
+        ]);
+
+        Queue::assertPushed(ProcessVideo::class);
     });
 });
