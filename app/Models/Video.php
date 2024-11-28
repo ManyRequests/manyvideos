@@ -17,6 +17,8 @@ class Video extends Model
         'thumbnail',
         'size',
         'duration',
+        'width',
+        'height',
         'user_id',
     ];
 
