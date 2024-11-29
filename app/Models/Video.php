@@ -36,6 +36,11 @@ class Video extends Model
         $query->withCount('comments');
     }
 
+    public function scopeWithMinAttributes($query)
+    {
+        $query->select('id', 'title', 'thumbnail', 'duration', 'user_id', 'created_at');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

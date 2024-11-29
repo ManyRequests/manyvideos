@@ -21,3 +21,12 @@ it('does not load comments count by default', function () {
 
     expect($video->comments_count)->toBeNull();
 });
+
+it('can load with minimal attributes', function () {
+    $video = Video::factory()->create();
+
+    $video = Video::withMinAttributes()->find($video->id);
+
+    expect($video->getAttributes())
+        ->toHaveKeys(['id', 'title', 'thumbnail', 'user_id', 'duration', 'created_at']);
+});
