@@ -4,6 +4,7 @@ import { Link, usePage, router } from '@inertiajs/vue3';
 import { sizeToHuman, timeToHuman } from '@/utils/toHumanFormats';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import VideoTag from '@/Components/VideoTag.vue';
+import VideoComments from '@/Components/VideoComments.vue';
 
 const page = usePage()
 
@@ -31,7 +32,7 @@ const time = computed(() => {
             </video>
             <h1 class="text-xl font-semibold mt-3 mb-3">{{ page.props.video.title }}</h1>
             <div class="flex items-center">
-                <div class="h-12 w-12 bg-gray-600 rounded-full"></div>
+                <img :src="page.props.video.user.profile_photo_url" class="h-12 w-12 rounded-full border border-gray-300">
                 <div class="capitalize">
                     <span class="font-semibold ml-2">{{ page.props.video.user.name }}</span>
                 </div>
@@ -53,6 +54,8 @@ const time = computed(() => {
                 </div>
 
             </div>
+
+            <VideoComments :video="page.props.video" />
         </div>
     </AppLayout>
 </template>
