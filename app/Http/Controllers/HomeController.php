@@ -20,6 +20,14 @@ class HomeController extends Controller
             ->when($request->search, function ($query, $search) {
                 $query->where('title', 'like', "%$search%");
             })
+            ->when($request->size_min, function ($query, $size_min) {
+                $size_min = $size_min * 1024 * 1024;
+                $query->where('size', '>=', $size_min);
+            })
+            ->when($request->size_max, function ($query, $size_max) {
+                $size_max = $size_max * 1024 * 1024;
+                $query->where('size', '<=', $size_max);
+            })
             ->withMinAttributes()
             ->with('user', 'tags')
             ->latest()
