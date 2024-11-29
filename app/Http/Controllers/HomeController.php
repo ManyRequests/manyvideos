@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\VideoStatusEnum;
+use App\Http\Requests\IndexHomeRequest;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -10,14 +11,16 @@ use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(IndexHomeRequest $request)
     {
+        $perpage = $request->perpage ?? 10;
+
         // it will show only the videos that are processed
         $videos = Video::where('status', VideoStatusEnum::Processed)
             ->withMinAttributes()
             ->with('user', 'tags')
             ->latest()
-            ->get();
+            ->paginate($perpage);
 
         return Inertia::render('Home', [
             'canLogin' => Route::has('login'),

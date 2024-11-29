@@ -28,7 +28,8 @@ it('renders with videos correctly', function () {
 
     $response->assertInertia(fn (AssertableInertia $page) => $page
         ->component('Home')
-        ->has('videos', 3, fn (AssertableInertia $page) => $page
+        ->has('videos')
+        ->has('videos.data', 3, fn (AssertableInertia $page) => $page
             ->has('id')
             ->has('title')
             ->has('thumbnail')
@@ -54,6 +55,58 @@ it('does not render videos that are not processed', function () {
 
     $response->assertInertia(fn (AssertableInertia $page) => $page
         ->component('Home')
-        ->has('videos', 0)
+        ->has('videos')
+        ->has('videos.data', 0)
+    );
+});
+
+it('renders paginated videos', function () {
+    $user = User::factory()->create();
+    $videos = Video::factory()->count(10)->create([
+        'user_id' => $user->id,
+        'status' => VideoStatusEnum::Processed,
+    ]);
+
+    $response = $this
+        ->get(route('home', [
+            'perpage' => 5,
+        ]));
+
+    $response->assertInertia(fn (AssertableInertia $page) => $page
+        ->component('Home')
+        ->has('videos')
+        ->where('videos.current_page', 1)
+        ->has('videos.data', 5, fn (AssertableInertia $page) => $page
+            ->has('id')
+            ->has('title')
+            ->has('thumbnail')
+            ->has('duration')
+            ->has('user_id')
+            ->has('created_at')
+            ->has('user')
+            ->has('tags')
+        )
+    );
+
+    $response = $this
+        ->get(route('home', [
+            'perpage' => 5,
+            'page' => 2,
+        ]));
+
+    $response->assertInertia(fn (AssertableInertia $page) => $page
+        ->component('Home')
+        ->has('videos')
+        ->where('videos.current_page', 2)
+        ->has('videos.data', 5, fn (AssertableInertia $page) => $page
+            ->has('id')
+            ->has('title')
+            ->has('thumbnail')
+            ->has('duration')
+            ->has('user_id')
+            ->has('created_at')
+            ->has('user')
+            ->has('tags')
+        )
     );
 });
