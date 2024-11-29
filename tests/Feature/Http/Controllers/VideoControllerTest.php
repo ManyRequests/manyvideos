@@ -6,6 +6,7 @@ use App\Jobs\ProcessVideo;
 use App\Jobs\SaveVideoMetadata;
 use App\Jobs\SendVideoProcessingCompletedNotification;
 use App\Jobs\UpdateVideoStatus;
+use App\Models\Tag;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Http\UploadedFile;
@@ -61,6 +62,22 @@ describe('VideoController', function () {
                 ->assertStatus(200);
 
             $response->assertDontSee($video->title);
+        });
+
+        it('lists videos with tags', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+
+            $tag = Tag::factory()->create();
+            $video->tags()->attach($tag->id);
+
+            $this->actingAs($this->user);
+
+            $response = $this->get('/videos')
+                ->assertStatus(200);
+
+            $response->assertSee($tag->name);
         });
     });
 
@@ -123,6 +140,40 @@ describe('VideoController', function () {
                 SaveVideoMetadata::class,
                 UpdateVideoStatus::class,
                 SendVideoProcessingCompletedNotification::class,
+            ]);
+        });
+
+        it('creates a video with tags', function () {
+            $this->actingAs($this->user);
+
+            $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
+
+            $response = $this->post('/videos', [
+                'title' => 'My video',
+                'description' => 'My video description',
+                'file' => $file,
+                'tags' => ['Gaming', 'Music'],
+            ]);
+
+            $video = Video::where('title', 'My video')->first();
+
+            // created  tags
+            $this->assertDatabaseHas('tags', [
+                'name' => 'gaming',
+            ]);
+
+            $this->assertDatabaseHas('tags', [
+                'name' => 'music',
+            ]);
+
+            $this->assertDatabaseHas('video_tag', [
+                'tag_id' =>  1,
+                'video_id' => $video->id,
+            ]);
+
+            $this->assertDatabaseHas('video_tag', [
+                'tag_id' => 2,
+                'video_id' => $video->id,
             ]);
         });
     });
@@ -188,6 +239,39 @@ describe('VideoController', function () {
                 SaveVideoMetadata::class,
                 UpdateVideoStatus::class,
                 SendVideoProcessingCompletedNotification::class,
+            ]);
+        });
+
+        it('updates a video with tags', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
+
+            $response = $this->put('/videos/' . $video->id, [
+                'title' => 'My updated video',
+                'description' => 'My updated video description',
+                'tags' => ['Gaming', 'Music'],
+            ]);
+
+            $video = Video::where('title', 'My updated video')->first();
+
+            $this->assertDatabaseHas('tags', [
+                'name' => 'gaming',
+            ]);
+
+            $this->assertDatabaseHas('tags', [
+                'name' => 'music',
+            ]);
+
+            $this->assertDatabaseHas('video_tag', [
+                'tag_id' =>  1,
+                'video_id' => $video->id,
+            ]);
+
+            $this->assertDatabaseHas('video_tag', [
+                'tag_id' => 2,
+                'video_id' => $video->id,
             ]);
         });
     });

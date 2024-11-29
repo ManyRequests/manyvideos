@@ -10,8 +10,10 @@ use App\Jobs\ProcessVideo;
 use App\Jobs\SaveVideoMetadata;
 use App\Jobs\SendVideoProcessingCompletedNotification;
 use App\Jobs\UpdateVideoStatus;
+use App\Models\Tag;
 use App\Models\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -24,6 +26,7 @@ class VideoController extends Controller
     public function index(Request $request)
     {
         $videos = Video::where('user_id', $request->user()->id)
+            ->with('tags')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -37,7 +40,10 @@ class VideoController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Videos/Create');
+        $tag = Tag::all();
+        return Inertia::render('Videos/Create', [
+            'tags' => $tag,
+        ]);
     }
 
     /**
@@ -65,6 +71,16 @@ class VideoController extends Controller
             new SendVideoProcessingCompletedNotification($video),
         ])->dispatch();
 
+        if ($request->has('tags')) {
+            $tags = Arr::map($request->tags, function ($tag) {
+                $name = strtolower($tag);
+                $color = '#' . substr(md5($name), 0, 6);
+                return Tag::firstOrCreate(['name' => $name, 'color' => $color])->id;
+            });
+
+            $video->tags()->attach($tags);
+        }
+
         return redirect()->route('videos.index');
     }
 
@@ -82,7 +98,7 @@ class VideoController extends Controller
     public function edit(Video $video)
     {
         return Inertia::render('Videos/Edit', [
-            'video' => $video,
+            'video' => $video->load('tags'),
         ]);
     }
 
@@ -107,6 +123,16 @@ class VideoController extends Controller
                 new UpdateVideoStatus($video, VideoStatusEnum::Processed),
                 new SendVideoProcessingCompletedNotification($video),
             ])->dispatch();
+        }
+
+        if ($request->has('tags')) {
+            $tags = Arr::map($request->tags, function ($tag) {
+                $name = strtolower($tag);
+                $color = '#' . substr(md5($name), 0, 6);
+                return Tag::firstOrCreate(['name' => $name, 'color' => $color])->id;
+            });
+
+            $video->tags()->sync($tags);
         }
 
         return redirect()->route('videos.index');
