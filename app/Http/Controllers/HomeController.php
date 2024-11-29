@@ -28,6 +28,14 @@ class HomeController extends Controller
                 $size_max = $size_max * 1024 * 1024;
                 $query->where('size', '<=', $size_max);
             })
+            ->when($request->duration_min, function ($query, $duration_min) {
+                $duration_min = $duration_min * 60;
+                $query->where('duration', '>=', $duration_min);
+            })
+            ->when($request->duration_max, function ($query, $duration_max) {
+                $duration_max = $duration_max * 60;
+                $query->where('duration', '<=', $duration_max);
+            })
             ->withMinAttributes()
             ->with('user', 'tags')
             ->latest()

@@ -42,7 +42,6 @@ it('renders with videos correctly', function () {
     );
 });
 
-
 it('does not render videos that are not processed', function () {
     $user = User::factory()->create();
     $videos = Video::factory()->count(3)->create([
@@ -222,6 +221,107 @@ describe('filter videos by size', function () {
         $response = $this
             ->get(route('home', [
                 'size_max' => '10',
+            ]));
+
+        $response->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('Home')
+            ->has('videos')
+            ->has('videos.data', 1, fn (AssertableInertia $page) => $page
+                ->has('id')
+                ->where('id', $videos[0]->id)
+                ->has('title')
+                ->has('thumbnail')
+                ->has('duration')
+                ->has('user_id')
+                ->has('created_at')
+                ->has('user')
+                ->has('tags')
+            )
+        );
+    });
+});
+
+describe('filter videos by duration', function () {
+    it('filters by video duration range in minutes', function () {
+        $user = User::factory()->create();
+        $videos = Video::factory(1)->create([
+            'user_id' => $user->id,
+            'status' => VideoStatusEnum::Processed,
+            'duration' => 7 * 60,
+        ]);
+
+        Video::factory(5)->create([
+            'user_id' => $user->id,
+            'status' => VideoStatusEnum::Processed,
+            'duration' => 20 * 60,
+        ]);
+
+        $response = $this
+            ->get(route('home', [
+                'duration_min' => '5',
+                'duration_max' => '10',
+            ]));
+
+        $response->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('Home')
+            ->has('videos')
+            ->has('videos.data', 1, fn (AssertableInertia $page) => $page
+                ->has('id')
+                ->where('id', $videos[0]->id)
+                ->has('title')
+                ->has('thumbnail')
+                ->has('duration')
+                ->has('user_id')
+                ->has('created_at')
+                ->has('user')
+                ->has('tags')
+            )
+        );
+    });
+
+    it('filters by video duration min in minutes', function () {
+        $user = User::factory()->create();
+        $videos = Video::factory(1)->create([
+            'user_id' => $user->id,
+            'status' => VideoStatusEnum::Processed,
+            'duration' => 7 * 60,
+        ]);
+
+        Video::factory(5)->create([
+            'user_id' => $user->id,
+            'status' => VideoStatusEnum::Processed,
+            'duration' => 20 * 60,
+        ]);
+
+        $response = $this
+            ->get(route('home', [
+                'duration_min' => '5',
+            ]));
+
+        $response->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('Home')
+            ->has('videos')
+            ->has('videos.data', 6)
+        );
+    });
+
+    it('filters by video duration max in minutes', function () {
+        $user = User::factory()->create();
+        $videos = Video::factory(1)->create([
+            'user_id' => $user->id,
+            'status' => VideoStatusEnum::Processed,
+            'duration' => 7 * 60,
+        ]);
+
+        Video::factory(5)->create([
+            'user_id' => $user->id,
+            'status' => VideoStatusEnum::Processed,
+            'duration' => 20 * 60,
+        ]);
+
+        $response = $this
+            ->get(route('home', [
+                'duration_max' => '10',
             ]));
 
         $response->assertInertia(fn (AssertableInertia $page) => $page

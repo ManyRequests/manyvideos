@@ -27,6 +27,8 @@ class IndexHomeRequest extends FormRequest
             'search' => ['nullable', 'string', 'max:255'],
             'size_min' => ['nullable', 'integer', 'min:1', 'max:500'],
             'size_max' => ['nullable', 'integer', 'min:1', 'max:500'],
+            'duration_min' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'duration_max' => ['nullable', 'integer', 'min:1', 'max:10'],
         ];
     }
 }
