@@ -88,7 +88,25 @@ class VideoController extends Controller
      */
     public function update(UpdateVideoRequest $request, Video $video)
     {
-        //
+        $video->update($request->only('title', 'description'));
+
+        if ($request->hasFile('file')) {
+            $video->update([
+                'url' => $request->file('file')->store('videos', 'public'),
+                'size' => $request->file('file')->getSize(),
+                'status' => VideoStatusEnum::Processing,
+            ]);
+
+            Bus::chain([
+                new ProcessVideo($video),
+                new GenerateVideoThumbnail($video),
+                new SaveVideoMetadata($video),
+                new UpdateVideoStatus($video, VideoStatusEnum::Processed),
+                new SendVideoProcessingCompletedNotification($video),
+            ])->dispatch();
+        }
+
+        return redirect()->route('videos.index');
     }
 
     /**

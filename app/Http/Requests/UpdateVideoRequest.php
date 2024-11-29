@@ -11,7 +11,7 @@ class UpdateVideoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,10 +24,7 @@ class UpdateVideoRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'url' => ['required', 'url'],
-            'thumbnail' => ['required', 'url'],
-            'size' => ['required', 'integer'],
-            'duration' => ['required', 'integer'],
+            'file' => ['file', 'mimetypes:video/mp4', 'max:102400'],
         ];
     }
 }

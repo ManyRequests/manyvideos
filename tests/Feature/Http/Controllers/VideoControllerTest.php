@@ -128,6 +128,68 @@ describe('VideoController', function () {
     });
 
     describe('update endpoint', function () {
+        it('updates a video', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
+
+            $response = $this->put('/videos/' . $video->id, [
+                'title' => 'My updated video',
+                'description' => 'My updated video description',
+            ]);
+
+            $response->assertRedirect('/videos');
+
+            $this->assertDatabaseHas('videos', [
+                'id' => $video->id,
+                'title' => 'My updated video',
+                'description' => 'My updated video description',
+            ]);
+        });
+
+        it('updates a video with a new file', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
+
+            $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
+
+            Storage::fake('public');
+
+            $response = $this->put('/videos/' . $video->id, [
+                'title' => 'My updated video',
+                'description' => 'My updated video description',
+                'file' => $file,
+            ]);
+
+            Storage::disk('public')->assertExists('videos/' . $file->hashName());
+        });
+
+        it('calls the video process jobs when updating the file', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
+            Bus::fake();
+
+            $file = UploadedFile::fake()->create('video.mp4', 1024, 'video/mp4');
+
+            $response = $this->put('/videos/' . $video->id, [
+                'title' => 'My updated video',
+                'description' => 'My updated video description',
+                'file' => $file,
+            ]);
+
+            Bus::assertChained([
+                ProcessVideo::class,
+                GenerateVideoThumbnail::class,
+                SaveVideoMetadata::class,
+                UpdateVideoStatus::class,
+                SendVideoProcessingCompletedNotification::class,
+            ]);
+        });
     });
 
     describe('delete endpoint', function () {
