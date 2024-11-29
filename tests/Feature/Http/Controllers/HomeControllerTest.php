@@ -110,3 +110,32 @@ it('renders paginated videos', function () {
         )
     );
 });
+
+it('filters by course title', function () {
+    $user = User::factory()->create();
+    $videos = Video::factory()->count(3)->create([
+        'user_id' => $user->id,
+        'status' => VideoStatusEnum::Processed,
+    ]);
+
+    $response = $this
+        ->get(route('home', [
+            'search' => $videos[0]->title,
+        ]));
+
+    $response->assertInertia(fn (AssertableInertia $page) => $page
+        ->component('Home')
+        ->has('videos')
+        ->has('videos.data', 1, fn (AssertableInertia $page) => $page
+            ->has('id')
+            ->where('id', $videos[0]->id)
+            ->has('title')
+            ->has('thumbnail')
+            ->has('duration')
+            ->has('user_id')
+            ->has('created_at')
+            ->has('user')
+            ->has('tags')
+        )
+    );
+});

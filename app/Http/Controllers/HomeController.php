@@ -17,6 +17,9 @@ class HomeController extends Controller
 
         // it will show only the videos that are processed
         $videos = Video::where('status', VideoStatusEnum::Processed)
+            ->when($request->search, function ($query, $search) {
+                $query->where('title', 'like', "%$search%");
+            })
             ->withMinAttributes()
             ->with('user', 'tags')
             ->latest()

@@ -23,7 +23,8 @@ class IndexHomeRequest extends FormRequest
     {
         return [
             'perpage' => ['nullable', 'integer', 'min:1', 'max:20'],
-            'page' => ['nullable', 'integer', 'min:1'],
+            'page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'search' => ['nullable', 'string', 'max:255'],
         ];
     }
 }
