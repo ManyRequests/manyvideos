@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import SecondaryButton from './SecondaryButton.vue';
 
 const props = defineProps({
     video: Object,
@@ -17,8 +18,15 @@ const play = () => {
 
 <template>
     <div class="border border-gray-800 rounded-lg overflow-hidden">
-        <div class="px-4 py-2">
+        <div class="flex flex-row px-4 py-2 items-center">
             <h3 class="font-semibold">{{ video.title }}</h3>
+            <div class="ml-auto">
+                <Link :href="route('videos.edit', video.id)">
+                    <SecondaryButton>
+                        Edit
+                    </SecondaryButton>
+                </Link>
+            </div>
         </div>
         <div class="px-4 py-2 bg-gray-200">
             <div v-if="video.status === 'processing'">

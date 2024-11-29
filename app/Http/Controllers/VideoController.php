@@ -80,7 +80,9 @@ class VideoController extends Controller
      */
     public function edit(Video $video)
     {
-        //
+        return Inertia::render('Videos/Edit', [
+            'video' => $video,
+        ]);
     }
 
     /**
