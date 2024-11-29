@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import SecondaryButton from './SecondaryButton.vue';
 import DangerButton from './DangerButton.vue';
+import VideoTag from './VideoTag.vue';
 
 const props = defineProps({
     video: Object,
@@ -54,6 +55,12 @@ const remove = async () => {
                     <span>Dimensions: {{ video.width }} x {{video.height }}</span>
                     <span>Size: {{ video.size }}</span>
                     <span>Duration: {{ video.duration }}s</span>
+                    <div>
+                        <span>Tags:</span>
+                        <div class="flex gap-2">
+                            <VideoTag v-for="tag in video.tags" :key="tag.id" :tag="tag"/>
+                        </div>
+                    </div>
                 </div>
                 <div v-if="!playing">
                     <img :src="`/storage/${video.thumbnail}`" alt="thumbnail" class="rounded-xl" @click="play"/>
