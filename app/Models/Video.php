@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\VideoStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Video extends Model
 {
@@ -28,8 +30,13 @@ class Video extends Model
         'status' => VideoStatusEnum::class,
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'video_tag', 'video_id', 'tag_id');
     }
 }
