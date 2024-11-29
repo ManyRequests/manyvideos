@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +25,5 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('videos', VideoController::class);
+    Route::resource('tags', TagController::class);
 });
