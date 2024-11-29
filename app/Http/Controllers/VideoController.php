@@ -90,7 +90,9 @@ class VideoController extends Controller
      */
     public function show(Video $video)
     {
-        //
+        return Inertia::render('Videos/Show', [
+            'video' => $video->load('tags', 'user', 'comments.user'),
+        ]);
     }
 
     /**

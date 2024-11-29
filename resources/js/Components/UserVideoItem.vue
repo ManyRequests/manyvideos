@@ -63,11 +63,10 @@ const remove = async () => {
                         </div>
                     </div>
                 </div>
-                <div v-if="!playing">
-                    <img :src="`/storage/${video.thumbnail}`" alt="thumbnail" class="rounded-xl" @click="play"/>
-                </div>
-                <div v-else-if="playing">
-                    <video :src="`/storage/${video.url}`" controls class="rounded-xl"></video>
+                <div>
+                    <Link :href="route('videos.show', video.id)">
+                        <img :src="`/storage/${video.thumbnail}`" alt="thumbnail" class="rounded-xl" @click="play"/>
+                    </Link>
                 </div>
             </div>
         </div>

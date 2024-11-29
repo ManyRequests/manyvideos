@@ -547,7 +547,9 @@ const logout = () => {
 
             <!-- Page Content -->
             <main>
-                <slot />
+                <div class="max-w-5xl mx-auto">
+                    <slot />
+                </div>
             </main>
         </div>
     </div>

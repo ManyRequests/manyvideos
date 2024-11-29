@@ -41,7 +41,82 @@ describe('VideoController', function () {
         Notification::fake();
     });
 
-    describe('show endpoint', function () {});
+    describe('show endpoint', function () {
+        it('shows a video', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
+
+            $response = $this->get('/videos/' . $video->id)
+                ->assertStatus(200);
+
+            $response->assertInertia(function (AssertableInertia $page) use ($video) {
+                $page->where('video.id', $video->id);
+                $page->where('video.title', $video->title);
+                $page->where('video.description', $video->description);
+                $page->where('video.url', $video->url);
+            });
+        });
+
+        it('show a video as a non owner', function () {
+            $video = Video::factory()->create();
+            $this->actingAs($this->user);
+
+            $response = $this->get('/videos/' . $video->id)
+                ->assertStatus(200);
+        });
+
+        it('renders with the video user', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
+
+            $response = $this->get('/videos/' . $video->id)
+                ->assertStatus(200)
+                ->assertInertia(function (AssertableInertia $page) {
+                    $page->where('video.user.id', $this->user->id);
+                });
+        });
+
+        it('renders the video tags', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+
+            $tag = Tag::factory()->create();
+            $video->tags()->attach($tag->id);
+
+            $this->actingAs($this->user);
+
+            $response = $this->get('/videos/' . $video->id)
+                ->assertStatus(200);
+
+            $response->assertInertia(function (AssertableInertia $page) use ($tag) {
+                $page->where('video.tags.0.name', $tag->name);
+            });
+        });
+
+        it('renders with comments', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+
+            $video->comments()->create([
+                'user_id' => $this->user->id,
+                'content' => 'My comment',
+            ]);
+
+            $this->actingAs($this->user);
+
+            $response = $this->get('/videos/' . $video->id)
+                ->assertStatus(200)
+                ->assertInertia(function (AssertableInertia $page) {
+                    $page->where('video.comments.0.content', 'My comment');
+                });
+        });
+    });
 
     describe('index endpoint', function () {
         it('lists videos', function () {
