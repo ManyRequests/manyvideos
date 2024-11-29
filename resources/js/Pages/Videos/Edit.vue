@@ -1,7 +1,8 @@
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import VideoTagsSelect from '@/Components/VideoTagsSelect.vue';
 
 const page = usePage();
 const file = ref(null);
@@ -9,7 +10,10 @@ const file = ref(null);
 const video = reactive({
     title: page.props.video.title,
     description: page.props.video.description,
+    tags: [],
 });
+
+const currentTags = ref([]);
 
 const submit = async () => {
     const data = new FormData();
@@ -17,6 +21,10 @@ const submit = async () => {
     data.append('_method', 'PUT');
     data.append('title', video.title);
     data.append('description', video.description);
+
+    video.tags.forEach(tag => {
+        data.append('tags[]', tag);
+    });
 
     if (file.value.files[0]) {
         data.append('file', file.value.files[0]);
@@ -28,6 +36,13 @@ const submit = async () => {
         },
     });
 }
+
+onMounted(() => {
+    if (page.props.video.tags) {
+        video.tags = page.props.video.tags.map(tag => tag.name);
+        currentTags.value = page.props.video.tags.map(tag => tag.name);
+    }
+});
 </script>
 
 <template>
@@ -65,6 +80,13 @@ const submit = async () => {
                             class="mt-1 block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
                         >
                         </textarea>
+                    </div>
+
+                    <div>
+                        <VideoTagsSelect
+                            v-model="video.tags"
+                            :tags="currentTags"
+                        />
                     </div>
 
                     <div>

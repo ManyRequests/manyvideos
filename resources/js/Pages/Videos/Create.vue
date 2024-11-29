@@ -1,12 +1,16 @@
 <script setup>
 import { ref, reactive } from 'vue';
-import { router, Link } from '@inertiajs/vue3';
+import { router, Link, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import VideoTagsSelect from '@/Components/VideoTagsSelect.vue';
+
+const page = usePage();
 
 const form = reactive({
     title: '',
     description: '',
+    tags: [],
 });
 
 const file = ref(null);
@@ -52,6 +56,10 @@ function submit() {
                     <div class="block">
                         <label for="description" class="text-gray-700">Description</label>
                         <textarea v-model="form.description" name="description" id="description" class="form-textarea mt-1 block w-full"></textarea>
+                    </div>
+
+                    <div class="block">
+                        <VideoTagsSelect v-model="form.tags" :tags="page.props.tags"/>
                     </div>
 
                     <div class="block">
