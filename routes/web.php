@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Foundation\Application;
@@ -25,5 +26,11 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('videos', VideoController::class);
+
+    Route::group(['prefix' => 'videos/{video}', 'as' => 'videos.'], function () {
+        Route::resource('comments', CommentController::class)->only(['store', 'destroy'])
+            ->middleware('can:create,App\Models\Comment,video');
+    });
+
     Route::resource('tags', TagController::class);
 });
