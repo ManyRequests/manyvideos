@@ -193,6 +193,35 @@ describe('VideoController', function () {
     });
 
     describe('delete endpoint', function () {
+        it('deletes a video', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
 
+            $response = $this->delete('/videos/' . $video->id);
+
+            $response->assertRedirect('/videos');
+
+            $this->assertDatabaseMissing('videos', [
+                'id' => $video->id,
+            ]);
+        });
+
+        it('deletes the video file', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+            $this->actingAs($this->user);
+
+            $storage = Storage::fake('public');
+            $storage->put($video->url, 'video content');
+            $storage->put($video->thumbnail, 'thumbnail content');
+
+            $response = $this->delete('/videos/' . $video->id);
+
+            Storage::disk('public')->assertMissing($video->url);
+            Storage::disk('public')->assertMissing($video->thumbnail);
+        });
     });
 });

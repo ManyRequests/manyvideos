@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import SecondaryButton from './SecondaryButton.vue';
+import DangerButton from './DangerButton.vue';
 
 const props = defineProps({
     video: Object,
@@ -13,6 +14,16 @@ const play = () => {
     playing.value = true;
     const video = document.getElementById('video');
     video.play();
+};
+
+const remove = async () => {
+    if (confirm('Are you sure you want to delete this video?')) {
+        router.delete(route('videos.destroy', {
+            video: props.video.id,
+        }), {
+            preserveScroll: true,
+        });
+    }
 };
 </script>
 
@@ -26,6 +37,9 @@ const play = () => {
                         Edit
                     </SecondaryButton>
                 </Link>
+                <DangerButton @click="remove" class="ml-1">
+                    Delete
+                </DangerButton>
             </div>
         </div>
         <div class="px-4 py-2 bg-gray-200">

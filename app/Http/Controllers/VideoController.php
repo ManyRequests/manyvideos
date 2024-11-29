@@ -13,6 +13,7 @@ use App\Jobs\UpdateVideoStatus;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class VideoController extends Controller
@@ -116,6 +117,11 @@ class VideoController extends Controller
      */
     public function destroy(Video $video)
     {
-        //
+        Storage::disk('public')->delete($video->url);
+        Storage::disk('public')->delete($video->thumbnail);
+
+        $video->delete();
+
+        return redirect()->route('videos.index');
     }
 }
