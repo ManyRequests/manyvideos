@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use Inertia\Testing\AssertableInertia;
 
 describe('VideoController', function () {
 
@@ -78,6 +80,28 @@ describe('VideoController', function () {
                 ->assertStatus(200);
 
             $response->assertSee($tag->name);
+        });
+
+        it('lists videos with comment count', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+
+            $video->comments()->create([
+                'user_id' => $this->user->id,
+                'content' => 'My comment',
+            ]);
+
+            $this->actingAs($this->user);
+
+            $response = $this->get('/videos')
+                ->assertStatus(200)
+                ->assertInertia(function (AssertableInertia $page) {
+                    $page->count('videos', 1);
+                    $page->where('videos.0.comments_count', 1);
+                });
+
+
         });
     });
 

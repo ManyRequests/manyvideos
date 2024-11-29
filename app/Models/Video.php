@@ -31,6 +31,11 @@ class Video extends Model
         'status' => VideoStatusEnum::class,
     ];
 
+    public function scopeWithCommentsCount($query)
+    {
+        $query->withCount('comments');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

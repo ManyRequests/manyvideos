@@ -27,6 +27,7 @@ class VideoController extends Controller
     {
         $videos = Video::where('user_id', $request->user()->id)
             ->with('tags')
+            ->withCommentsCount()
             ->orderBy('created_at', 'desc')
             ->get();
 

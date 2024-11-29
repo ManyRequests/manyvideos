@@ -55,8 +55,9 @@ const remove = async () => {
                     <span>Dimensions: {{ video.width }} x {{video.height }}</span>
                     <span>Size: {{ video.size }}</span>
                     <span>Duration: {{ video.duration }}s</span>
-                    <div>
-                        <span>Tags:</span>
+                    <span>Comments: {{ video.comments_count }}</span>
+                    <div class="flex flex-row">
+                        <span class="mr-1">Tags:</span>
                         <div class="flex gap-2">
                             <VideoTag v-for="tag in video.tags" :key="tag.id" :tag="tag"/>
                         </div>
