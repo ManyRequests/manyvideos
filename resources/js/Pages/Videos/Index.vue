@@ -20,11 +20,11 @@ onMounted(() => {
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout title="My Videos">
         <template #header>
             <div class="flex flex-row items-center gap-4">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    Your Videos
+                    My Videos
                 </h2>
 
                 <Link :href="route('videos.create')">
