@@ -69,7 +69,7 @@ const applyFilters = () => {
                     Filters
                 </span>
             </h5>
-            <div class="flex flex-row gap-5">
+            <div class="flex flex-row flex-wrap gap-5">
                 <div>
                     <Input
                         v-model="form.size_min"
