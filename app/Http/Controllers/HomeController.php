@@ -38,6 +38,7 @@ class HomeController extends Controller
             })
             ->withMinAttributes()
             ->with('user', 'tags')
+            ->withCommentsCount()
             ->latest()
             ->paginate($perpage);
 
