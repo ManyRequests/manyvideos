@@ -41,12 +41,9 @@ const videoParsed = computed(() => {
 <template>
     <div class="border border-gray-800 rounded-lg overflow-hidden">
         <div class="px-4 py-2">
-            <div v-if="video.status === 'processing'">
-                <p>Procesando</p>
-            </div>
-            <VideoItem v-else-if="video.status === 'processed'" :video="videoParsed" @click="play">
+            <VideoItem :video="videoParsed" @click="play">
                 <template #overlay>
-                    <div class="absolute top-2 right-0 flex flex-row px-4 py-2 items-center">
+                    <div v-if="video.status === 'processed'" class="absolute top-2 right-0 flex flex-row px-4 py-2 items-center">
                         <div class="ml-auto">
                             <Link :href="route('videos.edit', video.id)">
                                 <SecondaryButton>
@@ -57,6 +54,14 @@ const videoParsed = computed(() => {
                                 <svg  xmlns="http://www.w3.org/2000/svg" class="size-4"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
                             </DangerButton>
                         </div>
+                    </div>
+
+                    <div
+                        v-else-if="video.status === 'processing'"
+                        class="flex flex-row absolute bottom-0 left-0 pt-0 pr-1 gap-1 items-center bg-indigo-900 text-white rounded-tr-lg rounded-bl-lg"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a7 7 0 1 0 14 0a7 7 0 0 0 -14 0z" /><path d="M14.5 10.5l-2.5 2.5" /><path d="M17 8l1 -1" /><path d="M14 3h-4" /></svg>
+                        Processing
                     </div>
                 </template>
             </VideoItem>

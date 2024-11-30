@@ -35,12 +35,20 @@ const commentsCount = computed(() => {
 
 <template>
     <Link :href="route('videos.show', video.id)" class="group">
-        <div class="relative">
+        <div class="relative overflow-hidden">
             <img
+                v-if="props.video.status === 'processed'"
                 class="w-full aspect-video object-cover rounded-xl"
                 :src="thumbnailUrl"
                 :alt="video.title"
             >
+            <div
+                v-else-if="props.video.status === 'processing'"
+                class="w-full aspect-video bg-slate-600 rounded-xl overflow-hidden"
+            >
+                <div class="w-full aspect-video bg-gradient-to-r from-transparent via-rose-100/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+            </div>
+
             <div class="absolute bottom-2 right-2 text-xs bg-black bg-opacity-70 text-white px-2 py-1 rounded-xl">
                 <span>{{ duration }}</span>
             </div>
