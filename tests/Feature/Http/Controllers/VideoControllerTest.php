@@ -265,13 +265,15 @@ describe('VideoController', function () {
                 'name' => 'music',
             ]);
 
+            $tags = Tag::whereIn('name', ['gaming', 'music'])->get();
+
             $this->assertDatabaseHas('video_tag', [
-                'tag_id' =>  1,
+                'tag_id' =>  $tags[0]->id,
                 'video_id' => $video->id,
             ]);
 
             $this->assertDatabaseHas('video_tag', [
-                'tag_id' => 2,
+                'tag_id' => $tags[1]->id,
                 'video_id' => $video->id,
             ]);
         });
@@ -341,35 +343,42 @@ describe('VideoController', function () {
             ]);
         });
 
-        it('updates a video with tags', function () {
+        it('updates a video with new tags', function () {
             $video = Video::factory()->create([
                 'user_id' => $this->user->id,
             ]);
             $this->actingAs($this->user);
 
+            $tags = Tag::factory(2)->create();
+
+            $video->tags()->sync($tags->pluck('id'));
+
             $response = $this->put('/videos/' . $video->id, [
                 'title' => 'My updated video',
                 'description' => 'My updated video description',
-                'tags' => ['Gaming', 'Music'],
-            ]);
-
-            $video = Video::where('title', 'My updated video')->first();
-
-            $this->assertDatabaseHas('tags', [
-                'name' => 'gaming',
+                'tags' => [
+                    'Gaming',
+                    'Music',
+                ],
             ]);
 
             $this->assertDatabaseHas('tags', [
-                'name' => 'music',
+                'name' => 'Gaming',
             ]);
+
+            $this->assertDatabaseHas('tags', [
+                'name' => 'Music',
+            ]);
+
+            $tags = Tag::whereIn('name', ['Gaming', 'Music'])->get();
 
             $this->assertDatabaseHas('video_tag', [
-                'tag_id' =>  1,
+                'tag_id' =>  $tags[0]->id,
                 'video_id' => $video->id,
             ]);
 
             $this->assertDatabaseHas('video_tag', [
-                'tag_id' => 2,
+                'tag_id' => $tags[1]->id,
                 'video_id' => $video->id,
             ]);
         });
