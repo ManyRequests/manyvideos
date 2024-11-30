@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue';
+import Footer from '@/Components/Footer.vue';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import PublicVideos from '@/Components/PublicVideos.vue';
 
@@ -26,7 +26,7 @@ const props = defineProps({
 
 <template>
     <Head title="Welcome" />
-    <div class="bg-gray-50 text-black/50 dark:bg-gray-900 dark:text-white/50">
+    <div class="bg-slate-800">
         <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
             <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
                 <header class="flex items-center gap-2 py-10">
@@ -66,13 +66,12 @@ const props = defineProps({
                     </nav>
                 </header>
 
-                <main class="mt-6">
+                <main class="mt-6 pb-10">
                     <PublicVideos :videos="page.props.videos"></PublicVideos>
                 </main>
 
-                <footer class="py-16 text-center text-sm text-black dark:text-white/70">
-                </footer>
             </div>
         </div>
     </div>
+    <Footer></Footer>
 </template>

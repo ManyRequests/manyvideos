@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
+import Footer from "@/Components/Footer.vue";
 import ApplicationMark from "@/Components/ApplicationMark.vue";
 import Banner from "@/Components/Banner.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -571,6 +572,8 @@ const logout = () => {
                     <slot />
                 </div>
             </main>
+
+            <Footer />
         </div>
     </div>
 </template>
