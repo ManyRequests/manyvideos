@@ -10,7 +10,6 @@
 
     font-family: Grand Hotel, cursive;
     font-weight: 400;
-    font-size: 2.2rem;
     letter-spacing: 0.1rem;
 }
 </style>
