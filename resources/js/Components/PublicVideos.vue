@@ -1,9 +1,10 @@
 <script setup>
 import VideoItem from '@/Components/VideoItem.vue';
+import VideoFilters from '@/Components/VideoFilters.vue';
 
 const props = defineProps({
     videos: {
-        type: Array,
+        type: Object,
         required: true,
     },
 })
@@ -11,6 +12,8 @@ const props = defineProps({
 
 <template>
     <div>
+        <VideoFilters />
+
         <div class="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 lg:grid-cols-3">
             <VideoItem v-for="video in videos.data" :key="video.id" :video="video" />
         </div>
