@@ -41,7 +41,7 @@ const linkRoute = computed(() => {
 </script>
 
 <template>
-    <Link :href="linkRoute" class="group">
+    <div>
         <div class="relative overflow-hidden">
             <div
                 v-if="props.video.status === 'processing'"
@@ -53,13 +53,14 @@ const linkRoute = computed(() => {
                 v-else-if="props.video.status === 'failed'"
                 class="w-full aspect-video bg-slate-600 rounded-xl overflow-hidden"
             />
-            <img
-                v-else-if="props.video.status === 'processed'"
-                class="w-full aspect-video object-cover rounded-xl"
-                :src="thumbnailUrl"
-                :alt="video.title"
-            >
+            <Link v-else-if="props.video.status === 'processed'" :href="linkRoute">
+                <img
 
+                    class="w-full aspect-video object-cover rounded-xl"
+                    :src="thumbnailUrl"
+                    :alt="video.title"
+                >
+            </Link>
 
             <div class="absolute bottom-2 right-2 text-xs bg-black bg-opacity-70 text-white px-2 py-1 rounded-xl">
                 <span>{{ duration }}</span>
@@ -69,9 +70,9 @@ const linkRoute = computed(() => {
         <div class="flex flex-row py-3 gap-3">
             <UserProfilePicture :user="video.user" />
             <div class="w-full">
-                <div class="flex flex-row items-center gap-3">
+                <Link :href="linkRoute" class="flex flex-row items-center gap-3">
                     <span class="text-white font-bold">{{ video.title }}</span>
-                </div>
+                </Link>
                 <div >
                     <span class="text-gray-400 text-sm capitalize">{{ video.user.name }}</span>
                 </div>
@@ -87,7 +88,7 @@ const linkRoute = computed(() => {
                 <slot name="footer"></slot>
             </div>
         </div>
-    </Link>
+    </div>
 </template>
 
 <style lang="scss" scoped>

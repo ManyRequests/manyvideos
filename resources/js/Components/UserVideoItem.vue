@@ -34,7 +34,7 @@ const videoParsed = computed(() => {
         <div class="px-4 py-2">
             <VideoItem :video="videoParsed">
                 <template #overlay>
-                    <div v-if="video.status === 'processed'" class="absolute top-2 right-0 flex flex-row px-4 py-2 items-center">
+                    <div v-if="video.status === 'processed'" class="absolute top-2 right-0 flex flex-row px-4 py-2 items-center z-10">
                         <div class="ml-auto">
                             <Link :href="route('videos.edit', video.id)">
                                 <SecondaryButton>
