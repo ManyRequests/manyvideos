@@ -16,12 +16,12 @@ const props = defineProps({
         >
             <div class="flex flex-1 justify-between sm:hidden">
                 <Link
-                    :href="videos.prev_page_url"
+                    :href="videos.prev_page_url || '#'"
                     class="relative inline-flex items-center rounded-md bg-indigo-900 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
                     >Previous</Link
                 >
                 <Link
-                    :href="videos.next_page_url"
+                    :href="videos.next_page_url || '#'"
                     class="relative ml-3 inline-flex items-center rounded-md  bg-indigo-900 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
                     >Next</Link
                 >
@@ -46,7 +46,7 @@ const props = defineProps({
                         aria-label="Pagination"
                     >
                         <a
-                            :href="videos.prev_page_url"
+                            :href="videos.prev_page_url || '#'"
                             class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-700 focus:z-20 focus:outline-offset-0"
                             :class="{
                                 'hover:bg-indigo-400 hover:text-white': videos.prev_page_url,
@@ -83,7 +83,7 @@ const props = defineProps({
                             {{ page }}
                         </a>
                         <a
-                            :href="videos.next_page_url"
+                            :href="videos.next_page_url || '#'"
                             class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-700  focus:z-20 focus:outline-offset-0"
                             :class="{
                                 'hover:bg-indigo-400 hover:text-white': videos.next_page_url,
