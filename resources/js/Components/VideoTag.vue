@@ -20,7 +20,7 @@ const bgColorToTailwindRGBA = computed(() => {
 </script>
 
 <template>
-    <span class="rounded-md py-0 px-3 border-2 bg-opacity-70 font-semibold" :style="{
+    <span class="rounded-full py-0 px-2 border-2 bg-opacity-70 font-semibold text-xs text-white" :style="{
         borderColor: tag.color,
         backgroundColor: bgColorToTailwindRGBA,
     }">
