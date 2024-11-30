@@ -38,7 +38,7 @@ class Video extends Model
 
     public function scopeWithMinAttributes($query)
     {
-        $query->select('id', 'title', 'thumbnail', 'duration', 'user_id', 'created_at');
+        $query->select('id', 'title', 'thumbnail', 'duration', 'status', 'user_id', 'created_at');
     }
 
     public function user(): BelongsTo

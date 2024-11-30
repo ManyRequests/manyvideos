@@ -28,5 +28,5 @@ it('can load with minimal attributes', function () {
     $video = Video::withMinAttributes()->find($video->id);
 
     expect($video->getAttributes())
-        ->toHaveKeys(['id', 'title', 'thumbnail', 'user_id', 'duration', 'created_at']);
+        ->toHaveKeys(['id', 'title', 'thumbnail', 'status', 'user_id', 'duration', 'created_at']);
 });
