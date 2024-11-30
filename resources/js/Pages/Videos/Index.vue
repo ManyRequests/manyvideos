@@ -8,10 +8,15 @@ import { onMounted } from 'vue';
 
 const page = usePage();
 
+const notificationsRequiringReload = [
+    'App\\Notifications\\VideoProcessingCompleted',
+    'App\\Notifications\\VideoProcessingFailedNotification',
+];
+
 onMounted(() => {
     window.Echo.private(`App.Models.User.${page.props.auth.user.id}`)
         .notification((notification) => {
-            if (notification.type === 'App\\Notifications\\VideoProcessingCompleted') {
+            if (notificationsRequiringReload.includes(notification.type)) {
                 // Refresh the page
                 router.reload();
             }

@@ -335,7 +335,7 @@ const logout = () => {
                                         Notifications
                                     </div>
 
-                                    <div class="border-t border-gray-200" />
+                                    <div class="border-t border-gray-600" />
 
                                     <DropdownNotificationItem
                                         v-for="notification in notifications"

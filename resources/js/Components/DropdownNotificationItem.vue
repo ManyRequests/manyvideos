@@ -13,6 +13,12 @@ const types = {
             href: route('videos.index'),
         }
     },
+    'App\\Notifications\\VideoProcessingFailedNotification': () => {
+        return {
+            title: 'Your video processing has failed!',
+            href: route('videos.index'),
+        }
+    },
 };
 
 const notificationData = computed(() => {
