@@ -5,6 +5,7 @@ import { sizeToHuman, timeToHuman } from '@/utils/toHumanFormats';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import VideoTag from '@/Components/VideoTag.vue';
 import VideoComments from '@/Components/VideoComments.vue';
+import UserProfilePicture from '@/Components/UserProfilePicture.vue';
 
 const page = usePage()
 
@@ -17,6 +18,10 @@ const size = computed(() => {
     return sizeToHuman(page.props.video.size);
 });
 
+const createdAt = computed(() => {
+    return new Date(page.props.video.created_at).toLocaleDateString();
+});
+
 const time = computed(() => {
     return timeToHuman(page.props.video.duration);
 });
@@ -25,21 +30,21 @@ const time = computed(() => {
 <template>
     <AppLayout>
 
-        <div class="py-4">
+        <div class="px-2 sm:px-4 lg:px-0 py-4">
             <video id="video" controls class="rounded-md w-full">
                 <source :src="url" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
-            <h1 class="text-xl font-semibold mt-3 mb-3">{{ page.props.video.title }}</h1>
+            <h1 class="text-xl font-semibold mt-3 mb-3 text-white">{{ page.props.video.title }}</h1>
             <div class="flex items-center">
-                <img :src="page.props.video.user.profile_photo_url" class="h-12 w-12 rounded-full border border-gray-300">
+                <UserProfilePicture :user="page.props.video.user" />
                 <div class="capitalize">
-                    <span class="font-semibold ml-2">{{ page.props.video.user.name }}</span>
+                    <span class="font-semibold ml-2 text-gray-200">{{ page.props.video.user.name }}</span>
                 </div>
             </div>
-            <div class="py-4 px-4 bg-slate-800 text-white rounded-md mt-4">
+            <div class="py-4 px-4 bg-slate-700 text-white rounded-md mt-4">
                 <div class="flex flex-row gap-4">
-                    <span class="font-semibold">{{ page.props.video.created_at }}</span>
+                    <span class="font-semibold">{{ createdAt }}</span>
 
                     <div class="inline-flex bg-gray-600 font-semibold px-2 rounded-full gap-3">
                         <span>{{ page.props.video.width }} x {{ page.props.video.height }}</span>

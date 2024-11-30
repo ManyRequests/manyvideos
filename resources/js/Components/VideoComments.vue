@@ -18,7 +18,7 @@ const commentsCount = computed(() => {
 
 <template>
     <div class="py-4">
-        <h2 class="text-lg font-semibold mb-1">{{ commentsCount }} Comment{{ commentsCount === 1 ? '' : 's'  }}</h2>
+        <h2 class="text-lg font-semibold mb-1 text-white">{{ commentsCount }} Comment{{ commentsCount === 1 ? '' : 's'  }}</h2>
 
         <VideoCommentsCreate :video="video" />
 
