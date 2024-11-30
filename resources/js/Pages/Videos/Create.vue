@@ -4,6 +4,9 @@ import { router, Link, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import VideoTagsSelect from '@/Components/VideoTagsSelect.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import TextAreaInput from '@/Components/TextAreaInput.vue';
 
 const page = usePage();
 
@@ -32,7 +35,7 @@ function submit() {
     <AppLayout title="Create Video">
         <template #header>
             <div class="flex flex-row items-center gap-4">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 class="font-semibold text-xl text-white leading-tight">
                     Create Video
                 </h2>
                 <div>
@@ -45,32 +48,40 @@ function submit() {
             </div>
         </template>
 
-        <div class="mx-auto max-w-5xl w-full py-6">
+        <div class="mx-auto max-w-5xl w-full py-6 px-2 sm:px-4 lg:px-0">
             <form @submit.prevent="submit">
                 <div class="grid grid-cols-1 gap-6">
                     <div class="block">
-                        <label for="title" class="text-gray-700">Title</label>
-                        <input v-model="form.title" type="text" name="title" id="title" class="form-input mt-1 block w-full" />
+                        <InputLabel :value="'Title'" />
+                        <TextInput v-model="form.title"name="title" id="title" class="mt-1 block w-full" />
                     </div>
 
                     <div class="block">
-                        <label for="description" class="text-gray-700">Description</label>
-                        <textarea v-model="form.description" name="description" id="description" class="form-textarea mt-1 block w-full"></textarea>
+                        <InputLabel :value="'Description'" />
+                        <TextAreaInput v-model="form.description" name="description" id="description" class="mt-1 block w-full" />
                     </div>
 
                     <div class="block">
+                        <InputLabel :value="'Tags'" />
                         <VideoTagsSelect v-model="form.tags" :tags="page.props.tags"/>
                     </div>
 
                     <div class="block">
-                        <label for="video" class="text-gray-700">Video</label>
-                        <input ref="file" type="file" name="video" id="video" class="form-input mt-1 block w-full" />
+                        <InputLabel :value="'Video'" />
+                        <input
+                            id="video"
+                            ref="file"
+                            type="file"
+                            name="video"
+                            accept="video/*"
+                            class="form-input mt-1 block w-full rounded-lg bg-gray-700 text-white"
+                        />
                     </div>
 
                     <div class="block">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Create
-                        </button>
+                        <PrimaryButton type="submit">
+                            Create Video
+                        </PrimaryButton>
                     </div>
                 </div>
             </form>

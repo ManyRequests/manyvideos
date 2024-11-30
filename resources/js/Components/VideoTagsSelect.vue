@@ -38,7 +38,7 @@ function removeTag(index) {
                 min-h-20
                 items-center
                 border
-                border-gray-200
+                border-gray-600
                 rounded-md
                 p-3
                 overflow-y-auto
@@ -48,8 +48,8 @@ function removeTag(index) {
             <span v-for="(tag, index) in modelValue">
                 <span
                     class="
-                        bg-gray-100
-                        text-gray-700
+                        bg-indigo-800
+                        text-white
                         px-2
                         py-1
                         rounded-full
@@ -63,7 +63,7 @@ function removeTag(index) {
                     <button
                         type="button"
                         @click="removeTag(index)"
-                        class="text-gray-500 hover:text-gray-700"
+                        class="text-white hover:text-gray-300"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
