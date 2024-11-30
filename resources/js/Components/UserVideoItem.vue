@@ -3,7 +3,6 @@ import { ref, computed } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
-import VideoTag from '@/Components/VideoTag.vue';
 import VideoItem from '@/Components/VideoItem.vue';
 
 const page = usePage();
@@ -11,14 +10,6 @@ const page = usePage();
 const props = defineProps({
     video: Object,
 });
-
-const playing = ref(false);
-
-const play = () => {
-    playing.value = true;
-    const video = document.getElementById('video');
-    video.play();
-};
 
 const remove = async () => {
     if (confirm('Are you sure you want to delete this video?')) {
@@ -41,7 +32,7 @@ const videoParsed = computed(() => {
 <template>
     <div class="border border-gray-800 rounded-lg overflow-hidden">
         <div class="px-4 py-2">
-            <VideoItem :video="videoParsed" @click="play">
+            <VideoItem :video="videoParsed">
                 <template #overlay>
                     <div v-if="video.status === 'processed'" class="absolute top-2 right-0 flex flex-row px-4 py-2 items-center">
                         <div class="ml-auto">
