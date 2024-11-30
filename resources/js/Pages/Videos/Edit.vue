@@ -1,8 +1,12 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { usePage, router } from '@inertiajs/vue3';
+import { usePage, router, Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import VideoTagsSelect from '@/Components/VideoTagsSelect.vue';
+import TextInput from '@/Components/TextInput.vue';
+import TextAreaInput from '@/Components/TextAreaInput.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 const page = usePage();
 const file = ref(null);
@@ -48,38 +52,22 @@ onMounted(() => {
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="font-semibold text-xl text-white leading-tight">
                 Edit Video
             </h2>
         </template>
 
-        <div class="flex flex-col mx-auto max-w-7xl w-max gap-4 my-4">
+        <div class="mx-auto max-w-5xl w-full py-6 px-2 sm:px-4 lg:px-0">
             <form @submit.prevent="submit">
                 <div class="flex flex-col gap-4">
                     <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700">
-                            Title
-                        </label>
-                        <input
-                            v-model="video.title"
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="mt-1 block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
-                        >
+                        <InputLabel for="title" value="Title" />
+                        <TextInput v-model="video.title" id="title" class="w-full"/>
                     </div>
 
                     <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700">
-                            Description
-                        </label>
-                        <textarea
-                            v-model="video.description"
-                            id="description"
-                            name="description"
-                            class="mt-1 block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
-                        >
-                        </textarea>
+                        <InputLabel for="description" value="Description" />
+                        <TextAreaInput v-model="video.description" id="description" class="w-full"/>
                     </div>
 
                     <div>
@@ -90,27 +78,34 @@ onMounted(() => {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Actual Video
-                        </label>
-                        <img
-                            :src="`/storage/${page.props.video.thumbnail}`"
-                            alt="thumbnail"
-                            class="max-w-xl w-full rounded-xl border shadow"
-                        >
+                        <InputLabel value="Thumbnail" />
+                        <Link :href="route('videos.show', {
+                            video: page.props.video.id
+                        })">
+                            <img
+                                :src="`/storage/${page.props.video.thumbnail}`"
+                                alt="thumbnail"
+                                class="max-w-xl w-full rounded-xl border shadow"
+                            >
+                        </Link>
                     </div>
 
                     <div>
-                        <label for="video" class="block text-sm font-medium text-gray-700">
-                            Video
-                        </label>
-                        <input type="file" id="video" ref="file" name="video" class="mt-1 block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md">
+                        <InputLabel value="Video" />
+                        <input
+                            id="video"
+                            ref="file"
+                            type="file"
+                            name="video"
+                            accept="video/*"
+                            class="form-input mt-1 block w-full rounded-lg bg-gray-700 text-white"
+                        />
                     </div>
 
                     <div>
-                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Save
-                        </button>
+                        <PrimaryButton type="submit">
+                            Update Video
+                        </PrimaryButton>
                     </div>
                 </div>
             </form>
