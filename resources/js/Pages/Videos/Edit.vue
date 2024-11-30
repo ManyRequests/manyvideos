@@ -1,40 +1,31 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { usePage, router, Link } from '@inertiajs/vue3';
+import { usePage, useForm, router, Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import VideoTagsSelect from '@/Components/VideoTagsSelect.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import InputError from '@/Components/InputError.vue';
 
 const page = usePage();
 const file = ref(null);
 
-const video = reactive({
+const video = useForm({
+    _method: 'PUT',
     title: page.props.video.title,
     description: page.props.video.description,
     tags: [],
+    file: null,
 });
 
 const currentTags = ref([]);
 
 const submit = async () => {
-    const data = new FormData();
+    video.file = file.value.files[0];
 
-    data.append('_method', 'PUT');
-    data.append('title', video.title);
-    data.append('description', video.description);
-
-    video.tags.forEach(tag => {
-        data.append('tags[]', tag);
-    });
-
-    if (file.value.files[0]) {
-        data.append('file', file.value.files[0]);
-    }
-
-    router.post(route('videos.update', page.props.video.id), data, {
+    video.post(route('videos.update', page.props.video.id), {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
@@ -63,14 +54,17 @@ onMounted(() => {
                     <div>
                         <InputLabel for="title" value="Title" />
                         <TextInput v-model="video.title" id="title" class="w-full"/>
+                        <InputError v-if="video.errors.title" :message="video.errors.title" />
                     </div>
 
                     <div>
                         <InputLabel for="description" value="Description" />
+                        <InputError v-if="video.errors.description" :message="video.errors.description" />
                         <TextAreaInput v-model="video.description" id="description" class="w-full"/>
                     </div>
 
                     <div>
+                        <InputError v-if="video.errors.tags" :message="video.errors.tags" />
                         <VideoTagsSelect
                             v-model="video.tags"
                             :tags="currentTags"
@@ -100,6 +94,7 @@ onMounted(() => {
                             accept="video/*"
                             class="form-input mt-1 block w-full rounded-lg bg-gray-700 text-white"
                         />
+                        <InputError v-if="video.errors.file" :message="video.errors.file" />
                     </div>
 
                     <div>
