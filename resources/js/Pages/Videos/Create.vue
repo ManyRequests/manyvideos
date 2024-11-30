@@ -1,29 +1,29 @@
 <script setup>
 import { ref, reactive } from 'vue';
-import { router, Link, usePage } from '@inertiajs/vue3';
+import { router, Link, usePage, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import VideoTagsSelect from '@/Components/VideoTagsSelect.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
+import InputError from '@/Components/InputError.vue';
 
 const page = usePage();
 
-const form = reactive({
+const form = useForm({
     title: '',
     description: '',
     tags: [],
+    file: null,
 });
 
 const file = ref(null);
 
 function submit() {
-    console.log(route('videos.store'));
-    router.post(route('videos.store'), {
-        ...form,
-        file: file.value.files[0],
-    }, {
+    form.file = file.value.files[0];
+
+    form.post(route('videos.store'), {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
@@ -54,15 +54,18 @@ function submit() {
                     <div class="block">
                         <InputLabel :value="'Title'" />
                         <TextInput v-model="form.title"name="title" id="title" class="mt-1 block w-full" />
+                        <InputError v-if="form.errors.title" :message="form.errors.title" />
                     </div>
 
                     <div class="block">
                         <InputLabel :value="'Description'" />
                         <TextAreaInput v-model="form.description" name="description" id="description" class="mt-1 block w-full" />
+                        <InputError v-if="form.errors.description" :message="form.errors.description" />
                     </div>
 
                     <div class="block">
                         <InputLabel :value="'Tags'" />
+                        <InputError v-if="form.errors.tags" :message="form.errors.tags" />
                         <VideoTagsSelect v-model="form.tags" :tags="page.props.tags"/>
                     </div>
 
@@ -76,6 +79,7 @@ function submit() {
                             accept="video/*"
                             class="form-input mt-1 block w-full rounded-lg bg-gray-700 text-white"
                         />
+                        <InputError v-if="form.errors.file" :message="form.errors.file" />
                     </div>
 
                     <div class="block">
