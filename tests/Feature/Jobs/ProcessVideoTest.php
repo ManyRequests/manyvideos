@@ -4,6 +4,8 @@ use App\Enums\VideoStatusEnum;
 use App\Interfaces\MultimediaService;
 use App\Jobs\ProcessVideo;
 use App\Models\Video;
+use App\Notifications\VideoProcessingFailedNotification;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 describe('ProcessVideo Job Tests', function () {
@@ -52,5 +54,18 @@ describe('ProcessVideo Job Tests', function () {
         $job->failed(new Exception('Failed to compress video'));
 
         $storage->assertMissing('videos/video.mp4');
+    });
+
+    it('sends a notification if compression fails', function () {
+        Notification::fake();
+
+        $video = Video::factory()->create([
+            'url' => 'videos/video.mp4',
+        ]);
+
+        $job = new ProcessVideo($video);
+        $job->failed(new Exception('Failed to compress video'));
+
+        Notification::assertSentTo($video->user, VideoProcessingFailedNotification::class);
     });
 });

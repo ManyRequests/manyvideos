@@ -5,10 +5,12 @@ namespace App\Jobs;
 use App\Enums\VideoStatusEnum;
 use App\Interfaces\MultimediaService;
 use App\Models\Video;
+use App\Notifications\VideoProcessingFailedNotification;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class ProcessVideo implements ShouldQueue
@@ -29,9 +31,6 @@ class ProcessVideo implements ShouldQueue
      */
     public function handle(MultimediaService $multimediaService): void
     {
-        sleep(3);
-        throw new Exception("Error Processing video");
-
         $compressed_path = $multimediaService->compressVideo($this->video->url);
 
         $this->video->update([
@@ -48,5 +47,7 @@ class ProcessVideo implements ShouldQueue
         ]);
 
         Storage::disk('public')->delete($this->video->url);
+
+        Notification::send($this->video->user, new VideoProcessingFailedNotification($this->video));
     }
 }
