@@ -1,17 +1,18 @@
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
 import Input from '@/Components/Input.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import RangeInput from '@/Components/RangeInput.vue';
 
 const form = reactive({
     search: '',
-    size_min: null,
-    size_max: null,
-    duration_min: null,
-    duration_max: null,
+    size_min: 0,
+    size_max: 500,
+    duration_min: 0,
+    duration_max: 10,
 });
 
 const clearFilters = () => {
@@ -69,45 +70,42 @@ const applyFilters = () => {
                     Filters
                 </span>
             </h5>
-            <div class="flex flex-row flex-wrap gap-5">
-                <div>
-                    <Input
+            <div class="flex flex-row flex-wrap gap-5 w-full">
+                <div class="w-full sm:w-56">
+                    <RangeInput
                         v-model="form.size_min"
-                        type="number" label="Min Size"
-                        placeholder="Min size..."
-                        class="inline w-28 mr-2"
-                        min="0"
+                        class="inline mr-2"
+                        :label="`Min Size ${form.size_min ?? 0}MB`"
+                        :min="0"
                         :max="form.size_max"
                     />
-                    <Input
+                    <RangeInput
                         v-model="form.size_max"
-                        type="number"
-                        label="Max Size"
+                        :label="`Max Size ${form.size_max ?? 0}MB`"
                         placeholder="Max size..."
-                        class="inline w-28"
+                        class="inline"
                         :min="form.size_min"
+                        :max="500"
                     />
                 </div>
-                <div>
-                    <Input
+                <div class="w-full sm:w-56">
+                    <RangeInput
                         v-model="form.duration_min"
-                        type="number"
-                        label="Min Duration"
-                        placeholder="Min duration..."
-                        class="inline w-28 mr-2"
-                        min="0"
+                        :label="`Min Duration ${form.duration_min ?? 0} Minutes`"
+                        class="inline mr-2"
+                        :min="0"
                         :max="form.duration_max"
                     />
-                    <Input
+                    <RangeInput
                         v-model="form.duration_max"
-                        type="number"
-                        label="Max Duration"
+                        :label="`Max Duration ${form.duration_max ?? 0} Minutes`"
                         :min="form.duration_min"
+                        :max="10"
                         placeholder="Max duration..."
-                        class="inline w-28"
+                        class="inline"
                     />
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center sm:items-baseline">
                     <PrimaryButton @click="applyFilters">Apply</PrimaryButton>
                     <SecondaryButton @click="clearFilters" class="ml-2">Clear</SecondaryButton>
                 </div>
