@@ -7,11 +7,11 @@ const props = defineProps({
         default: 'Range'
     },
     min: {
-        type: [Number],
+        type: [Number, String],
         default: 0
     },
     max: {
-        type: Number,
+        type: [Number, String],
         default: 100
     },
 })
