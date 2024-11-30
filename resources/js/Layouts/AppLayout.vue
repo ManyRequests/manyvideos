@@ -52,20 +52,31 @@ const logout = () => {
 
         <Banner />
 
-        <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
+        <div class="min-h-screen bg-slate-800">
+            <nav class="bg-gray-800">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('home')">
                                     <ApplicationMark class="block h-9 w-auto" />
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
+                            <div
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                            >
+                                <NavLink
+                                    :href="route('home')"
+                                    :active="route().current('home')"
+                                >
+                                    Home
+                                </NavLink>
+                            </div>
+
                             <div
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
@@ -247,7 +258,7 @@ const logout = () => {
                                         >
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150"
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-gray-800 hover:text-gray-300 focus:outline-none focus:bg-gray-700 active:bg-gray-800 transition ease-in-out duration-150"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -272,7 +283,7 @@ const logout = () => {
                                     <template #content>
                                         <!-- Account Management -->
                                         <div
-                                            class="block px-4 py-2 text-xs text-gray-400"
+                                            class="block px-4 py-2 text-xs text-gray-300"
                                         >
                                             Manage Account
                                         </div>
@@ -293,7 +304,7 @@ const logout = () => {
                                             API Tokens
                                         </DropdownLink>
 
-                                        <div class="border-t border-gray-200" />
+                                        <div class="border-t border-gray-500" />
 
                                         <!-- Authentication -->
                                         <form @submit.prevent="logout">
@@ -305,9 +316,9 @@ const logout = () => {
                                 </Dropdown>
                             </div>
 
-                            <Dropdown v-if="page.props.auth.user" align="right" width="96">
+                            <Dropdown v-if="page.props.auth.user" align="right" width="96" class="ml-4">
                                 <template #trigger>
-                                    <svg class="h-7 w-7 text-gray-600" xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14.235 19c.865 0 1.322 1.024 .745 1.668a3.992 3.992 0 0 1 -2.98 1.332a3.992 3.992 0 0 1 -2.98 -1.332c-.552 -.616 -.158 -1.579 .634 -1.661l.11 -.006h4.471z" /><path d="M12 2c1.358 0 2.506 .903 2.875 2.141l.046 .171l.008 .043a8.013 8.013 0 0 1 4.024 6.069l.028 .287l.019 .289v2.931l.021 .136a3 3 0 0 0 1.143 1.847l.167 .117l.162 .099c.86 .487 .56 1.766 -.377 1.864l-.116 .006h-16c-1.028 0 -1.387 -1.364 -.493 -1.87a3 3 0 0 0 1.472 -2.063l.021 -.143l.001 -2.97a8 8 0 0 1 3.821 -6.454l.248 -.146l.01 -.043a3.003 3.003 0 0 1 2.562 -2.29l.182 -.017l.176 -.004z" /></svg>
+                                    <svg class="h-7 w-7 text-gray-400" xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14.235 19c.865 0 1.322 1.024 .745 1.668a3.992 3.992 0 0 1 -2.98 1.332a3.992 3.992 0 0 1 -2.98 -1.332c-.552 -.616 -.158 -1.579 .634 -1.661l.11 -.006h4.471z" /><path d="M12 2c1.358 0 2.506 .903 2.875 2.141l.046 .171l.008 .043a8.013 8.013 0 0 1 4.024 6.069l.028 .287l.019 .289v2.931l.021 .136a3 3 0 0 0 1.143 1.847l.167 .117l.162 .099c.86 .487 .56 1.766 -.377 1.864l-.116 .006h-16c-1.028 0 -1.387 -1.364 -.493 -1.87a3 3 0 0 0 1.472 -2.063l.021 -.143l.001 -2.97a8 8 0 0 1 3.821 -6.454l.248 -.146l.01 -.043a3.003 3.003 0 0 1 2.562 -2.29l.182 -.017l.176 -.004z" /></svg>
                                     <span
                                         v-if="notifications.length > 0"
                                         class="absolute bottom-3 left-3 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-white text-xs"
@@ -388,6 +399,15 @@ const logout = () => {
                 >
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink
+                            :href="route('home')"
+                            :active="route().current('home')"
+                        >
+                            Home
+                        </ResponsiveNavLink>
+                    </div>
+
+                    <div class="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink
                             :href="route('videos.index')"
                             :active="route().current('videos.index')"
                         >
@@ -396,7 +416,7 @@ const logout = () => {
                     </div>
 
                     <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200">
+                    <div class="pt-4 pb-1 border-t border-gray-600">
                         <div class="flex items-center px-4">
                             <div
                                 v-if="
@@ -415,7 +435,7 @@ const logout = () => {
 
                             <div>
                                 <div
-                                    class="font-medium text-base text-gray-800"
+                                    class="font-medium text-base text-white"
                                 >
                                     {{ $page.props.auth.user.name }}
                                 </div>
@@ -539,7 +559,7 @@ const logout = () => {
             </nav>
 
             <!-- Page Heading -->
-            <header v-if="$slots.header" class="bg-white shadow">
+            <header v-if="$slots.header" class="bg-gray-900 shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
