@@ -41,7 +41,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout title="Edit Video">
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight">
                 Edit Video

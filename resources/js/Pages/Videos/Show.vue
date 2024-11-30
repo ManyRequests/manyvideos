@@ -28,7 +28,7 @@ const time = computed(() => {
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout :title="page.props.video.title">
 
         <div class="px-2 sm:px-4 lg:px-0 py-4">
             <video id="video" controls class="rounded-md w-full">
