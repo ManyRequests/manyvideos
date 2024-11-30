@@ -2,11 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Enums\VideoStatusEnum;
 use App\Interfaces\MultimediaService;
 use App\Models\Video;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProcessVideo implements ShouldQueue
 {
@@ -26,14 +29,24 @@ class ProcessVideo implements ShouldQueue
      */
     public function handle(MultimediaService $multimediaService): void
     {
-        try {
-            $compressed_path = $multimediaService->compressVideo($this->video->url);
+        sleep(3);
+        throw new Exception("Error Processing video");
 
-            $this->video->update([
-                'url' => $compressed_path,
-            ]);
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-        }
+        $compressed_path = $multimediaService->compressVideo($this->video->url);
+
+        $this->video->update([
+            'url' => $compressed_path,
+        ]);
+    }
+
+    public function failed(\Throwable $exception)
+    {
+        Log::error($exception->getMessage());
+
+        $this->video->update([
+            'status' => VideoStatusEnum::Failed,
+        ]);
+
+        Storage::disk('public')->delete($this->video->url);
     }
 }
