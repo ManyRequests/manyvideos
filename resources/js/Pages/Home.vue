@@ -19,8 +19,8 @@ const props = defineProps({
 <template>
     <Head title="Welcome" />
     <div class="bg-slate-800">
-        <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
-            <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
+        <div class="relative min-h-screen flex flex-col items-center selection:bg-[#FF2D20] selection:text-white">
+            <div class="relative size-full max-w-2xl px-6 lg:max-w-7xl">
                 <header class="flex items-center gap-2 py-10">
                     <nav v-if="canLogin" class="-mx-3 flex flex-1 items-center">
                         <Link
@@ -58,12 +58,12 @@ const props = defineProps({
                     </nav>
                 </header>
 
-                <main class="mt-6 pb-10">
+                <main class="flex-1 mt-6 pb-10">
                     <PublicVideos :videos="page.props.videos"></PublicVideos>
                 </main>
 
             </div>
         </div>
+        <Footer></Footer>
     </div>
-    <Footer></Footer>
 </template>
