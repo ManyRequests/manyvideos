@@ -44,10 +44,11 @@ const commentsCount = computed(() => {
             <div class="absolute bottom-2 right-2 text-xs bg-black bg-opacity-70 text-white px-2 py-1 rounded-xl">
                 <span>{{ duration }}</span>
             </div>
+            <slot name="overlay"></slot>
         </div>
         <div class="flex flex-row py-3 gap-3">
             <UserProfilePicture :user="video.user" />
-            <div>
+            <div class="w-full">
                 <div class="flex flex-row items-center gap-3">
                     <span class="text-white font-bold">{{ video.title }}</span>
                 </div>
@@ -62,6 +63,8 @@ const commentsCount = computed(() => {
                 <div v-if="video.tags" class="flex flex-row gap-2 mt-1">
                     <VideoTag v-for="tag in video.tags" :key="tag.id" :tag="tag" />
                 </div>
+
+                <slot name="footer"></slot>
             </div>
         </div>
     </Link>

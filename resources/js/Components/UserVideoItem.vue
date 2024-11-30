@@ -1,9 +1,12 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
-import SecondaryButton from './SecondaryButton.vue';
-import DangerButton from './DangerButton.vue';
-import VideoTag from './VideoTag.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import VideoTag from '@/Components/VideoTag.vue';
+import VideoItem from '@/Components/VideoItem.vue';
+
+const page = usePage();
 
 const props = defineProps({
     video: Object,
@@ -26,49 +29,37 @@ const remove = async () => {
         });
     }
 };
+
+const videoParsed = computed(() => {
+    return {
+        ...props.video,
+        user: page.props.auth.user,
+    };
+})
 </script>
 
 <template>
     <div class="border border-gray-800 rounded-lg overflow-hidden">
-        <div class="flex flex-row px-4 py-2 items-center">
-            <h3 class="font-semibold">{{ video.title }}</h3>
-            <div class="ml-auto">
-                <Link :href="route('videos.edit', video.id)">
-                    <SecondaryButton>
-                        Edit
-                    </SecondaryButton>
-                </Link>
-                <DangerButton @click="remove" class="ml-1">
-                    Delete
-                </DangerButton>
-            </div>
-        </div>
-        <div class="px-4 py-2 bg-gray-200">
+        <div class="px-4 py-2">
             <div v-if="video.status === 'processing'">
                 <p>Procesando</p>
             </div>
-            <div v-else-if="video.status === 'processed'" class="flex flex-col">
-                <div>
-                    <p>{{ video.description }}</p>
-                </div>
-                <div class="flex gap-4">
-                    <span>Dimensions: {{ video.width }} x {{video.height }}</span>
-                    <span>Size: {{ video.size }}</span>
-                    <span>Duration: {{ video.duration }}s</span>
-                    <span>Comments: {{ video.comments_count }}</span>
-                    <div class="flex flex-row">
-                        <span class="mr-1">Tags:</span>
-                        <div class="flex gap-2">
-                            <VideoTag v-for="tag in video.tags" :key="tag.id" :tag="tag"/>
+            <VideoItem v-else-if="video.status === 'processed'" :video="videoParsed" @click="play">
+                <template #overlay>
+                    <div class="absolute top-2 right-0 flex flex-row px-4 py-2 items-center">
+                        <div class="ml-auto">
+                            <Link :href="route('videos.edit', video.id)">
+                                <SecondaryButton>
+                                    <svg  xmlns="http://www.w3.org/2000/svg" class="size-4"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
+                                </SecondaryButton>
+                            </Link>
+                            <DangerButton @click="remove" class="ml-1">
+                                <svg  xmlns="http://www.w3.org/2000/svg" class="size-4"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                            </DangerButton>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <Link :href="route('videos.show', video.id)">
-                        <img :src="`/storage/${video.thumbnail}`" alt="thumbnail" class="rounded-xl" @click="play"/>
-                    </Link>
-                </div>
-            </div>
+                </template>
+            </VideoItem>
         </div>
     </div>
 </template>
