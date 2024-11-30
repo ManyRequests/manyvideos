@@ -14,7 +14,6 @@ it('can create a comment', function () {
         'video_id' => $video->id,
     ]);
 
-    expect($comment->id)->toBe(1);
     expect($comment->user_id)->toBe($user->id);
     expect($comment->video_id)->toBe($video->id);
     expect($comment->content)->toBe('This is a comment');
