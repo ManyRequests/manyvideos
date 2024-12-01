@@ -36,6 +36,13 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
+            'config' => [
+                'videos' => [
+                    'max_file_size' => config('videos.max-upload-size'),
+                    'mime_types' => config('videos.mime-types'),
+                    'extensions' => config('videos.extensions'),
+                ],
+            ],
             'userUnreadNotifications' => fn () => $request->user() ? $request->user()->unreadNotifications : null,
         ]);
     }

@@ -24,7 +24,12 @@ class StoreVideoRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'file' => ['required', 'file', 'mimetypes:video/mp4', 'max:102400'],
+            'file' => [
+                'required',
+                'file',
+                'mimetypes:' . implode("," , config('videos.mime-types')),
+                'max:' . config('videos.max-upload-size') / 1024, // in KB
+            ],
             'tags' => ['nullable', 'array', 'max:5', 'distinct'],
         ];
     }

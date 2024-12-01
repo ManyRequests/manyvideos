@@ -10,6 +10,10 @@ import TextAreaInput from '@/Components/TextAreaInput.vue';
 import InputError from '@/Components/InputError.vue';
 
 const page = usePage();
+const file = ref(null);
+const allowedMimeTypes = page.props.config.videos.mime_types;
+const allowedExtensions = page.props.config.videos.extensions.join(', ');
+const maxFileSize = page.props.config.videos.max_file_size / 1024 / 1024;
 
 const form = useForm({
     title: '',
@@ -17,8 +21,6 @@ const form = useForm({
     tags: [],
     file: null,
 });
-
-const file = ref(null);
 
 function submit() {
     form.file = file.value.files[0];
@@ -71,12 +73,14 @@ function submit() {
 
                     <div class="block">
                         <InputLabel :value="'Video'" />
+                        <small class="text-gray-400">Max file size: {{ maxFileSize }}MB</small>
+                        <small class="text-gray-400 ml-1">Allowed formats: {{ allowedExtensions }}</small>
                         <input
                             id="video"
                             ref="file"
                             type="file"
                             name="video"
-                            accept="video/*"
+                            :accept="allowedMimeTypes"
                             class="form-input mt-1 block w-full rounded-lg bg-gray-700 text-white"
                         />
                         <InputError v-if="form.errors.file" :message="form.errors.file" />
