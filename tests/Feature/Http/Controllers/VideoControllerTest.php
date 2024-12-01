@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\VideoStatusEnum;
 use App\Interfaces\MultimediaService;
 use App\Jobs\GenerateVideoThumbnail;
 use App\Jobs\ProcessVideo;
@@ -45,6 +46,7 @@ describe('VideoController', function () {
         it('shows a video', function () {
             $video = Video::factory()->create([
                 'user_id' => $this->user->id,
+                'status' => VideoStatusEnum::Processed,
             ]);
             $this->actingAs($this->user);
 
@@ -60,7 +62,9 @@ describe('VideoController', function () {
         });
 
         it('show a video as a non owner', function () {
-            $video = Video::factory()->create();
+            $video = Video::factory()->create([
+                'status' => VideoStatusEnum::Processed,
+            ]);
             $this->actingAs($this->user);
 
             $response = $this->get('/videos/' . $video->id)
@@ -70,6 +74,7 @@ describe('VideoController', function () {
         it('renders with the video user', function () {
             $video = Video::factory()->create([
                 'user_id' => $this->user->id,
+                'status' => VideoStatusEnum::Processed,
             ]);
             $this->actingAs($this->user);
 
@@ -83,6 +88,7 @@ describe('VideoController', function () {
         it('renders the video tags', function () {
             $video = Video::factory()->create([
                 'user_id' => $this->user->id,
+                'status' => VideoStatusEnum::Processed,
             ]);
 
             $tag = Tag::factory()->create();
@@ -101,6 +107,7 @@ describe('VideoController', function () {
         it('renders with comments', function () {
             $video = Video::factory()->create([
                 'user_id' => $this->user->id,
+                'status' => VideoStatusEnum::Processed,
             ]);
 
             $video->comments()->create([
@@ -115,6 +122,17 @@ describe('VideoController', function () {
                 ->assertInertia(function (AssertableInertia $page) {
                     $page->where('video.comments.0.content', 'My comment');
                 });
+        });
+
+        it('doesnt allow to see a video in processing status', function () {
+            $video = Video::factory()->create([
+                'user_id' => $this->user->id,
+                'status' => VideoStatusEnum::Processing,
+            ]);
+            $this->actingAs($this->user);
+
+            $response = $this->get(route('videos.show', $video))
+                ->assertStatus(403);
         });
     });
 
@@ -382,6 +400,18 @@ describe('VideoController', function () {
                 'video_id' => $video->id,
             ]);
         });
+
+        it('doesnt updates other user videos', function () {
+            $video = Video::factory()->create();
+            $this->actingAs($this->user);
+
+            $response = $this->put('/videos/' . $video->id, [
+                'title' => 'My updated video',
+                'description' => 'My updated video description',
+            ]);
+
+            $response->assertStatus(403);
+        });
     });
 
     describe('delete endpoint', function () {
@@ -414,6 +444,15 @@ describe('VideoController', function () {
 
             Storage::disk('public')->assertMissing($video->url);
             Storage::disk('public')->assertMissing($video->thumbnail);
+        });
+
+        it('cant delete other user videos', function () {
+            $video = Video::factory()->create();
+            $this->actingAs($this->user);
+
+            $response = $this->delete('/videos/' . $video->id);
+
+            $response->assertStatus(403);
         });
     });
 });

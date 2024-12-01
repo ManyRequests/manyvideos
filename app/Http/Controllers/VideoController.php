@@ -15,6 +15,7 @@ use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -88,8 +89,10 @@ class VideoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Video $video)
+    public function show(Request $request, Video $video)
     {
+        Gate::authorize('view', $video);
+
         return Inertia::render('Videos/Show', [
             'video' => $video->load('tags', 'user', 'comments.user'),
         ]);
@@ -100,6 +103,8 @@ class VideoController extends Controller
      */
     public function edit(Video $video)
     {
+        Gate::authorize('update', $video);
+
         return Inertia::render('Videos/Edit', [
             'video' => $video->load('tags'),
         ]);
@@ -110,6 +115,8 @@ class VideoController extends Controller
      */
     public function update(UpdateVideoRequest $request, Video $video)
     {
+        Gate::authorize('update', $video);
+
         $video->update($request->only('title', 'description'));
 
         if ($request->hasFile('file')) {
@@ -146,6 +153,8 @@ class VideoController extends Controller
      */
     public function destroy(Video $video)
     {
+        Gate::authorize('delete', $video);
+
         Storage::disk('public')->delete($video->url);
         Storage::disk('public')->delete($video->thumbnail);
 
