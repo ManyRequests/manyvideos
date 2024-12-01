@@ -16,9 +16,11 @@ const form = reactive({
 });
 
 const clearFilters = () => {
-    Object.keys(form).forEach((key) => {
-        form[key] = null;
-    });
+    form.search = '';
+    form.size_min = 0;
+    form.size_max = 500;
+    form.duration_min = 0;
+    form.duration_max = 10;
 
     applyFilters();
 };
