@@ -1,24 +1,27 @@
 <?php
 
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::redirect('/dashboard', '/videos')->name('dashboard');
+
+    Route::resource('videos', VideoController::class);
+
+    Route::group(['prefix' => 'videos/{video}', 'as' => 'videos.'], function () {
+        Route::resource('comments', CommentController::class)->only(['store', 'destroy'])
+            ->middleware('can:create,App\Models\Comment,video');
+    });
+
+    Route::resource('tags', TagController::class);
 });

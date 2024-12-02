@@ -1,0 +1,73 @@
+<script setup>
+import { ref, computed } from 'vue';
+import { Link, usePage, router } from '@inertiajs/vue3';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import VideoItem from '@/Components/VideoItem.vue';
+
+const page = usePage();
+
+const props = defineProps({
+    video: Object,
+});
+
+const remove = async () => {
+    if (confirm('Are you sure you want to delete this video?')) {
+        router.delete(route('videos.destroy', {
+            video: props.video.id,
+        }), {
+            preserveScroll: true,
+        });
+    }
+};
+
+const videoParsed = computed(() => {
+    return {
+        ...props.video,
+        user: page.props.auth.user,
+    };
+})
+</script>
+
+<template>
+    <div class="border border-gray-800 rounded-lg overflow-hidden">
+        <div class="px-4 py-2">
+            <VideoItem :video="videoParsed">
+                <template #overlay>
+                    <div v-if="video.status === 'processed'" class="absolute top-2 right-0 flex flex-row px-4 py-2 items-center z-10">
+                        <div class="ml-auto">
+                            <Link :href="route('videos.edit', video.id)">
+                                <SecondaryButton>
+                                    <svg  xmlns="http://www.w3.org/2000/svg" class="size-4"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
+                                </SecondaryButton>
+                            </Link>
+                            <DangerButton @click="remove" class="ml-1">
+                                <svg  xmlns="http://www.w3.org/2000/svg" class="size-4"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                            </DangerButton>
+                        </div>
+                    </div>
+
+                    <div
+                        v-else-if="video.status === 'processing'"
+                        class="flex flex-row absolute bottom-0 left-0 pt-0 pr-1 gap-1 items-center bg-indigo-900 text-white rounded-tr-lg rounded-bl-lg"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a7 7 0 1 0 14 0a7 7 0 0 0 -14 0z" /><path d="M14.5 10.5l-2.5 2.5" /><path d="M17 8l1 -1" /><path d="M14 3h-4" /></svg>
+                        Processing
+                    </div>
+
+                    <div
+                        v-else-if="video.status === 'failed'"
+                        class="flex flex-row absolute bottom-0 left-0 pt-0 pr-1 gap-1 items-center bg-red-500 text-white rounded-tr-lg rounded-bl-lg"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 9v4" /><path d="M12 16v.01" /></svg>
+                        Failed
+                    </div>
+                </template>
+            </VideoItem>
+        </div>
+    </div>
+</template>
+
+<style lang="scss" scoped>
+
+</style>

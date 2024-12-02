@@ -1,0 +1,70 @@
+<script setup>
+import { computed } from 'vue';
+import { Link, usePage, router } from '@inertiajs/vue3';
+import { sizeToHuman, timeToHuman } from '@/utils/toHumanFormats';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import VideoTag from '@/Components/VideoTag.vue';
+import VideoComments from '@/Components/VideoComments.vue';
+import UserProfilePicture from '@/Components/UserProfilePicture.vue';
+
+const page = usePage()
+
+
+const url = computed(() => {
+    return `/storage/${page.props.video.url}`;
+});
+
+const size = computed(() => {
+    return sizeToHuman(page.props.video.size);
+});
+
+const createdAt = computed(() => {
+    return new Date(page.props.video.created_at).toLocaleDateString();
+});
+
+const time = computed(() => {
+    return timeToHuman(page.props.video.duration);
+});
+</script>
+
+<template>
+    <AppLayout :title="page.props.video.title">
+
+        <div class="px-2 sm:px-4 lg:px-0 py-4">
+            <video id="video" controls class="rounded-md w-full">
+                <source :src="url" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <h1 class="text-xl font-semibold mt-3 mb-3 text-white">{{ page.props.video.title }}</h1>
+            <div class="flex items-center">
+                <UserProfilePicture :user="page.props.video.user" />
+                <div class="capitalize">
+                    <span class="font-semibold ml-2 text-gray-200">{{ page.props.video.user.name }}</span>
+                </div>
+            </div>
+            <div class="py-4 px-4 bg-slate-700 text-white rounded-md mt-4">
+                <div class="flex flex-row gap-4">
+                    <span class="font-semibold">{{ createdAt }}</span>
+
+                    <div class="inline-flex bg-gray-600 font-semibold px-2 rounded-full gap-3">
+                        <span>{{ page.props.video.width }} x {{ page.props.video.height }}</span>
+                        <span>{{ size }}</span>
+                        <span>{{ time }}</span>
+                    </div>
+                </div>
+                <p class="font-medium mt-4">{{ page.props.video.description }}</p>
+
+                <div class="flex flex-row flex-wrap gap-2 mt-4">
+                    <VideoTag v-for="tag in page.props.video.tags" :key="tag.id" :tag="tag" />
+                </div>
+
+            </div>
+
+            <VideoComments :video="page.props.video" />
+        </div>
+    </AppLayout>
+</template>
+
+<style lang="scss" scoped>
+
+</style>
